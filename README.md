@@ -27,7 +27,7 @@ The main branch contains the latest stable version of the project. Main should o
 
 #### Dev
 
-The dev branch contains the master developmental verison of the project. Commiting directly to dev should be avoided, instead feature branches should be made from dev.
+The dev branch contains the master developmental version of the project. Committing directly to dev should be avoided, instead feature branches should be made from dev.
 
 #### Feature branches
 
