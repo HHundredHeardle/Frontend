@@ -13,7 +13,6 @@ This is the frontend for Hottest Hundred Heardle, a web app inspired by the now-
   - [1.2 - Project Management](#12---project-management)
 - [2 - Architecture](#2---architecture)
   - [2.1 - Flutter](#21---flutter)
-  - [2.2 - Vercel](#22---vercel)
 - [3 - Features](#3---features)
 
 ## 1 - Repository Organisation
@@ -41,9 +40,5 @@ Project tasks will be managed using [the HHundredHeardle GitHub Projects Board](
 ### 2.1 - Flutter
 
 Flutter will be used to create the client-side application. This allows access to the benefits of using dart, including type safety and aspects of functional programming. Flutter also allows for the potential of creating mobile and desktop applications in the future. 
-
-### 2.2 - Vercel
-
-The web app will be hosted with vercel.
 
 ## 3 - Features
