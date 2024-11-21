@@ -1,0 +1,48 @@
+name: Flutter Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  flutter-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v4
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+    - run: flutter pub get
+    - run: flutter test
+    - run: flutter build web
+      if: github.ref == 'refs/heads/main'
+    - name: Upload artifacts
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-web-build
+        path: build/web
+
+  deploy:
+    needs: flutter-test
+    runs-on: ubuntu-latest
+    if: success() && (github.ref == 'refs/heads/main')
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: flutter-web-build
+        path: build/web
+    - name: Deploy to InfinityFree via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: build/web/
+        server-dir: htdocs/
