@@ -8,6 +8,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'header/header.dart';
+
 void main() {
   runApp(const HHundredHeardle());
 }
@@ -54,15 +56,7 @@ class _MainPageState extends State<MainPage> {
       child: Column(
         children: [
           // title section
-          SizedBox(
-            height: 100.0,
-            child: Center(
-              child: Text(
-                widget.title,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-          ),
+          const HHHeader(),
 
           // main content
           Expanded(
