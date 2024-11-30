@@ -7,9 +7,12 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/footer.dart';
 
 import 'header/header.dart';
+import 'account.dart';
+import 'footer.dart';
+import 'main_panel.dart';
+import 'menu.dart';
 
 void main() {
   runApp(const HHundredHeardle());
@@ -34,6 +37,8 @@ class HHundredHeardle extends StatelessWidget {
           surface: Colors.black,
           onSurface: Colors.white,
           tertiary: Colors.grey[800],
+          primaryContainer: Colors.grey,
+          onPrimaryContainer: Colors.white,
         ),
         useMaterial3: true,
       ),
@@ -54,28 +59,31 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
-      child: Column(
+    return const Scaffold(
+      body: Column(
         children: [
           // title section
-          const HHHeader(),
+          HHHeader(),
 
           // main content
           Expanded(
-            child: Center(
-              child: Text(
-                "Hottest Hundred Heardle is currently under construction",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: Colors.yellow.withOpacity(0.75)),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: HHAccountPanel(),
+                ),
+                Expanded(
+                  child: HHMainPanel(),
+                ),
+                Expanded(
+                  child: HHMenuPanel(),
+                ),
+              ],
             ),
           ),
 
           // footer
-          const HHFooter(),
+          HHFooter(),
         ],
       ),
     );

@@ -8,8 +8,9 @@ library;
 
 import 'package:flutter/material.dart';
 
+/// Footer displayed at bottom of page
 class HHFooter extends StatelessWidget {
-  static const double _footerHeight = 50.0;
+  static const double _footerHeight = 40.0;
 
   const HHFooter({super.key});
 

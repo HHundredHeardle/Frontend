@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 /// Widget for the header of the app. Contains title, drawer, and account icon
 class HHHeader extends StatelessWidget {
-  static const double _headerHeight = 75.0;
+  static const double _headerHeight = 50.0;
 
   const HHHeader({super.key});
 
