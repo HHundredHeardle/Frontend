@@ -15,17 +15,7 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const HHundredHeardle());
 
-    // Verify that our counter starts at 0.
     expect(find.text("Hottest Hundred Heardle"), findsOneWidget);
-  });
-
-  testWidgets("Placeholder message is displayed", (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const HHundredHeardle());
-
-    // Verify that our counter starts at 0.
-    expect(find.text("Hottest Hundred Heardle is currently under construction"),
-        findsOneWidget);
   });
 
   /*

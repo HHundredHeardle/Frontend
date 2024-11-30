@@ -8,6 +8,12 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'header/header.dart';
+import 'account.dart';
+import 'footer.dart';
+import 'main_panel.dart';
+import 'menu.dart';
+
 void main() {
   runApp(const HHundredHeardle());
 }
@@ -20,16 +26,20 @@ class HHundredHeardle extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: const ColorScheme(
-            brightness: Brightness.dark,
-            primary: Colors.black,
-            onPrimary: Colors.white,
-            secondary: Colors.red,
-            onSecondary: Colors.white,
-            error: Colors.red,
-            onError: Colors.white,
-            surface: Colors.black,
-            onSurface: Colors.white),
+        colorScheme: ColorScheme(
+          brightness: Brightness.dark,
+          primary: Colors.black,
+          onPrimary: Colors.white,
+          secondary: Colors.red,
+          onSecondary: Colors.white,
+          error: Colors.red,
+          onError: Colors.white,
+          surface: Colors.black,
+          onSurface: Colors.white,
+          tertiary: Colors.grey[800],
+          primaryContainer: Colors.grey,
+          onPrimaryContainer: Colors.white,
+        ),
         useMaterial3: true,
       ),
       home: const MainPage(title: 'Hottest Hundred Heardle'),
@@ -49,33 +59,31 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
-      child: Column(
+    return const Scaffold(
+      body: Column(
         children: [
           // title section
-          SizedBox(
-            height: 100.0,
-            child: Center(
-              child: Text(
-                widget.title,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-          ),
+          HHHeader(),
 
           // main content
           Expanded(
-            child: Center(
-              child: Text(
-                "Hottest Hundred Heardle is currently under construction",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: Colors.yellow.withOpacity(0.75)),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: HHAccountPanel(),
+                ),
+                Expanded(
+                  child: HHMainPanel(),
+                ),
+                Expanded(
+                  child: HHMenuPanel(),
+                ),
+              ],
             ),
-          )
+          ),
+
+          // footer
+          HHFooter(),
         ],
       ),
     );
