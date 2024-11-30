@@ -30,11 +30,7 @@ class HHMainPanel extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _HHGuessBox(),
-              _HHGuessBox(),
-              _HHGuessBox(),
-              _HHGuessBox(),
-              _HHGuessBox(),
+              Expanded(child: _HHGuesses()),
               _HHTrackPlayer(),
               _HHAnswerEntry(),
             ],
@@ -47,14 +43,16 @@ class HHMainPanel extends StatelessWidget {
 
 /// Panel showing result of a specific guess
 class _HHGuessBox extends StatelessWidget {
-  static const double _guessBoxHeight = 75.0;
+  static const double _guessBoxGap = 10.0;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: _guessBoxHeight,
-      child: Container(
-        color: Theme.of(context).colorScheme.primaryContainer,
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: _guessBoxGap),
+        child: Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+        ),
       ),
     );
   }
@@ -128,6 +126,21 @@ class _HHPlayButton extends StatelessWidget {
         onPressed: onPressed,
         icon: const Icon(Icons.play_arrow),
       ),
+    );
+  }
+}
+
+class _HHGuesses extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _HHGuessBox(),
+        _HHGuessBox(),
+        _HHGuessBox(),
+        _HHGuessBox(),
+        _HHGuessBox(),
+      ],
     );
   }
 }
