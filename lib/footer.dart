@@ -36,7 +36,7 @@ class HHFooter extends StatelessWidget {
 
 /// Displays the most recent commit hash or "debug" if not deployed
 class _CommitHash extends StatelessWidget {
-  final String _hash = Version.commitHash;
+  final String _hash = Version.getCommitHash();
   final Color _textColor = Colors.grey;
   final EdgeInsets _padding = const EdgeInsets.only(right: 15.0);
 
