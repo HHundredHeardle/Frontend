@@ -8,6 +8,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'footer.dart';
+
 void main() {
   runApp(const HHundredHeardle());
 }
@@ -20,16 +22,20 @@ class HHundredHeardle extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: const ColorScheme(
-            brightness: Brightness.dark,
-            primary: Colors.black,
-            onPrimary: Colors.white,
-            secondary: Colors.red,
-            onSecondary: Colors.white,
-            error: Colors.red,
-            onError: Colors.white,
-            surface: Colors.black,
-            onSurface: Colors.white),
+        colorScheme: ColorScheme(
+          brightness: Brightness.dark,
+          primary: Colors.black,
+          onPrimary: Colors.white,
+          secondary: Colors.red,
+          onSecondary: Colors.white,
+          error: Colors.red,
+          onError: Colors.white,
+          surface: Colors.black,
+          onSurface: Colors.white,
+          tertiary: Colors.grey[800],
+          primaryContainer: Colors.grey,
+          onPrimaryContainer: Colors.white,
+        ),
         useMaterial3: true,
       ),
       home: const MainPage(title: 'Hottest Hundred Heardle'),
@@ -75,7 +81,10 @@ class _MainPageState extends State<MainPage> {
                     .copyWith(color: Colors.yellow.withOpacity(0.75)),
               ),
             ),
-          )
+          ),
+
+          // footer
+          const HHFooter(),
         ],
       ),
     );
