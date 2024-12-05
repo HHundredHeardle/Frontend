@@ -18,6 +18,7 @@ This is the frontend for Hottest Hundred Heardle, a web app inspired by the now-
   - [3.1 - Testing](#31---testing)
   - [3.2 - Deployment](#32---deployment)
 - [4 - Features](#4---features)
+  - [4.1 Version Indicator](#41-version-indicator)
 
 ## 1 - Repository Organisation
 
@@ -62,3 +63,7 @@ CI/CD is set up to run flutter tests. This is enabled for pull requests and push
 CI/CD is set up to automatically deploy to InfinityFree using FTP. This only occurs if tests pass. This is enabled for pushes to main only.
 
 ## 4 - Features
+
+### 4.1 Version Indicator
+
+The footer features a version indicator, which displays the first 7 characters of the latest commit hash. This is done so it can be determined if a new deployment has gone live. The version indicator works by setting the commit hash as an environment variable in [CI/CD](.github/workflows/flutter-tests.yml), which is retrieved in [version.dart](lib/version.dart)
