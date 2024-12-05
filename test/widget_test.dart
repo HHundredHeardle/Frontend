@@ -8,7 +8,7 @@
 //import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_application_1/main.dart';
+import 'package:hottest_hundred_heardle/main.dart';
 
 void main() {
   testWidgets("Title is displayed", (WidgetTester tester) async {
