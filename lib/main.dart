@@ -8,7 +8,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'header/header.dart';
+import 'header.dart';
 import 'account.dart';
 import 'footer.dart';
 import 'main_panel.dart';
