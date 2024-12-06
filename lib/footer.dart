@@ -7,6 +7,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'version.dart';
 
@@ -28,17 +29,41 @@ class HHFooter extends StatelessWidget {
             ),
           ),
         ),
-        child: _CommitHash(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _ContactInfo(),
+            _CommitHash(),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// Text displayed in footer
+class _FooterText extends StatelessWidget {
+  static const Color _textColor = Colors.grey;
+
+  final String text;
+
+  const _FooterText(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style:
+          Theme.of(context).textTheme.labelSmall?.copyWith(color: _textColor),
     );
   }
 }
 
 /// Displays the most recent commit hash or "debug" if not deployed
 class _CommitHash extends StatelessWidget {
+  static const EdgeInsets _padding = EdgeInsets.only(right: 15.0);
+
   final String _hash = Version.getCommitHash();
-  final Color _textColor = Colors.grey;
-  final EdgeInsets _padding = const EdgeInsets.only(right: 15.0);
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +71,43 @@ class _CommitHash extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Padding(
         padding: _padding,
-        child: Text(
+        child: _FooterText(
           _hash,
-          style: Theme.of(context)
-              .textTheme
-              .labelSmall
-              ?.copyWith(color: _textColor),
+        ),
+      ),
+    );
+  }
+}
+
+/// Displays contact information
+class _ContactInfo extends StatelessWidget {
+  static const String _email = "hhundredheardle@gmail.com";
+  static const String _text = "Contact: ";
+  static const EdgeInsets _padding = EdgeInsets.only(left: 15.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: _padding,
+        child: Row(
+          children: [
+            const _FooterText(
+              _text,
+            ),
+            InkWell(
+              child: const _FooterText(
+                _email,
+              ),
+              onTap: () => launchUrl(
+                Uri(
+                  scheme: "mailto",
+                  path: _email,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
