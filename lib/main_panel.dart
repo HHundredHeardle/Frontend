@@ -95,11 +95,11 @@ class _HHTrackPlayer extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
-      child: Padding(
+      child: const Padding(
         padding: _playerPadding,
         child: Row(
           children: [
-            HHPlayButton(onPressed: () {}),
+            HHPlayButton(),
           ],
         ),
       ),

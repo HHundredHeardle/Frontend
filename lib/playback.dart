@@ -7,12 +7,13 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+
+import 'backend.dart';
 
 /// Button to play track
 class HHPlayButton extends StatefulWidget {
-  final void Function() onPressed;
-
-  const HHPlayButton({required this.onPressed});
+  const HHPlayButton({super.key});
 
   @override
   State<HHPlayButton> createState() => _HHPlayButtonState();
@@ -21,26 +22,70 @@ class HHPlayButton extends StatefulWidget {
 class _HHPlayButtonState extends State<HHPlayButton> {
   static const double _iconRadius = 24.0;
 
-  bool _playing = false;
-
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onPrimary,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          borderRadius: BorderRadius.circular(_iconRadius),
         ),
-        borderRadius: BorderRadius.circular(_iconRadius),
-      ),
-      child: IconButton(
-        onPressed: () {
-          setState(() {
-            _playing = !_playing;
-          });
-          widget.onPressed;
-        },
-        icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
-      ),
+        child: FutureBuilder(
+          future: Backend.getClip(1),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                return _HHAudioPlayer(snapshot.data!);
+              } else {
+                debugPrint(snapshot.toString());
+                return const Tooltip(
+                  message: "Error loading audio",
+                  child: Icon(Icons.error),
+                );
+              }
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ));
+  }
+}
+
+/// Handles audio play and pausing
+class _HHAudioPlayer extends StatefulWidget {
+  final StreamAudioSource audio;
+
+  const _HHAudioPlayer(this.audio);
+  @override
+  State<_HHAudioPlayer> createState() => _HHAudioPlayerState();
+}
+
+class _HHAudioPlayerState extends State<_HHAudioPlayer> {
+  bool _playing = false;
+  late final AudioPlayer _player;
+
+  @override
+  void initState() {
+    _player = AudioPlayer();
+    _player.setAudioSource(widget.audio);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _playing = !_playing;
+          if (_playing) {
+            _player.play();
+          } else {
+            _player.pause();
+          }
+        });
+      },
+      icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
     );
   }
 }
