@@ -25,30 +25,32 @@ class _HHPlayButtonState extends State<HHPlayButton> {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-          borderRadius: BorderRadius.circular(_iconRadius),
+      // TODO: wrap in SizedBox
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
-        child: FutureBuilder(
-          future: Backend.getClip(1),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                return _HHAudioPlayer(snapshot.data!);
-              } else {
-                debugPrint(snapshot.toString());
-                return const Tooltip(
-                  message: "Error loading audio",
-                  child: Icon(Icons.error),
-                );
-              }
+        borderRadius: BorderRadius.circular(_iconRadius),
+      ),
+      child: FutureBuilder(
+        future: Backend.getClip(1),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return _HHAudioPlayer(snapshot.data!);
             } else {
-              return const CircularProgressIndicator();
+              debugPrint(snapshot.toString());
+              return const Tooltip(
+                message: "Error loading audio",
+                child: Icon(Icons.error),
+              );
             }
-          },
-        ));
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
+      ),
+    );
   }
 }
 
@@ -62,30 +64,47 @@ class _HHAudioPlayer extends StatefulWidget {
 }
 
 class _HHAudioPlayerState extends State<_HHAudioPlayer> {
-  bool _playing = false;
   late final AudioPlayer _player;
 
   @override
   void initState() {
     _player = AudioPlayer();
     _player.setAudioSource(widget.audio);
+    // pause and reset player once track finishes
+    _player.processingStateStream.listen((processingState) {
+      if (processingState == ProcessingState.completed) {
+        setState(() {
+          _player.pause();
+          _player.seek(Duration.zero);
+        });
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
+        // play/pause player
         setState(() {
-          _playing = !_playing;
-          if (_playing) {
-            _player.play();
-          } else {
+          if (_player.playerState.playing) {
             _player.pause();
+          } else {
+            _player.play();
           }
         });
       },
-      icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
+      // toggle icon based on player state
+      icon: Icon(
+        _player.playerState.playing ? Icons.pause : Icons.play_arrow,
+      ),
     );
   }
 }
