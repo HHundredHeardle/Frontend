@@ -21,34 +21,37 @@ class HHPlayButton extends StatefulWidget {
 
 class _HHPlayButtonState extends State<HHPlayButton> {
   static const double _iconRadius = 24.0;
+  static const double _size = 40.0;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      // TODO: wrap in SizedBox
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onPrimary,
+    return SizedBox.square(
+      dimension: _size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          borderRadius: BorderRadius.circular(_iconRadius),
         ),
-        borderRadius: BorderRadius.circular(_iconRadius),
-      ),
-      child: FutureBuilder(
-        future: Backend.getClip(1),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return _HHAudioPlayer(snapshot.data!);
+        child: FutureBuilder(
+          future: Backend.getClip(1),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                return _HHAudioPlayer(snapshot.data!);
+              } else {
+                debugPrint(snapshot.toString());
+                return const Tooltip(
+                  message: "Error loading audio",
+                  child: Icon(Icons.error),
+                );
+              }
             } else {
-              debugPrint(snapshot.toString());
-              return const Tooltip(
-                message: "Error loading audio",
-                child: Icon(Icons.error),
-              );
+              return const CircularProgressIndicator();
             }
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
+          },
+        ),
       ),
     );
   }
