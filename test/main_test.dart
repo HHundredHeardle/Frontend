@@ -1,7 +1,7 @@
 /// Hottest Hundred Heardle
 /// main_test.dart
 ///
-/// Widget tests for main screen
+/// Tests for main screen
 ///
 /// Authors: Joshua Linehan
 library;
