@@ -8,6 +8,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'playback.dart';
+
 /// Panel containing main game
 class HHMainPanel extends StatelessWidget {
   static const double _borderMargin = 10.0;
@@ -93,38 +95,13 @@ class _HHTrackPlayer extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
-      child: Padding(
+      child: const Padding(
         padding: _playerPadding,
         child: Row(
           children: [
-            _HHPlayButton(onPressed: () {}),
+            HHPlayButton(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Button to play track
-class _HHPlayButton extends StatelessWidget {
-  static const double _iconRadius = 24.0;
-
-  final void Function() onPressed;
-
-  const _HHPlayButton({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        borderRadius: BorderRadius.circular(_iconRadius),
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: const Icon(Icons.play_arrow),
       ),
     );
   }

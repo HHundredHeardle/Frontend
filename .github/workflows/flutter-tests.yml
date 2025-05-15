@@ -19,7 +19,7 @@ jobs:
         cache: true
     - run: flutter pub get
     - run: flutter test
-    - run: flutter build web --dart-define=COMMIT_HASH=${{ github.sha }}
+    - run: flutter build web --dart-define=COMMIT_HASH=${{ github.sha }} --dart-define=BACKEND_URL=${{ secrets.BACKEND_URL }}
       if: github.ref == 'refs/heads/main'
     - name: Upload artifacts
       if: github.ref == 'refs/heads/main'
