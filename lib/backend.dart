@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:http/http.dart' as http;
 
-import 'song-data.dart';
+import 'song_data.dart';
 
 /// Handles api calls. Singleton to allow it to load data from backend
 /// asynchronously
