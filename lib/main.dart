@@ -13,8 +13,11 @@ import 'account.dart';
 import 'footer.dart';
 import 'main_panel.dart';
 import 'menu.dart';
+import 'backend.dart';
 
 void main() {
+  // initialise backend
+  Backend();
   runApp(const HHundredHeardle());
 }
 

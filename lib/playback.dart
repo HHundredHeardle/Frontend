@@ -35,13 +35,14 @@ class _HHPlayButtonState extends State<HHPlayButton> {
           borderRadius: BorderRadius.circular(_iconRadius),
         ),
         child: FutureBuilder(
-          future: Backend.getClip(1),
+          future: Backend().clip1,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
                 return _HHAudioPlayer(snapshot.data!);
               } else {
-                debugPrint(snapshot.toString());
+                debugPrint(
+                    "_HHPlayButtonState.build: snapshot.toString(): ${snapshot.toString()}");
                 return const Tooltip(
                   message: "Error loading audio",
                   child: Icon(Icons.error),
