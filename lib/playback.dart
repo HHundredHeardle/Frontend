@@ -35,7 +35,7 @@ class _HHPlayButtonState extends State<HHPlayButton> {
           borderRadius: BorderRadius.circular(_iconRadius),
         ),
         child: FutureBuilder(
-          future: Backend().clip1,
+          future: Backend().clip1.future,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {

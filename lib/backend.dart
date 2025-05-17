@@ -21,12 +21,12 @@ import 'package:http/http.dart' as http;
 class Backend {
   static const String _backendURL = String.fromEnvironment("BACKEND_URL");
 
-  late final Future<StreamAudioSource?> clip1;
-  late final Future<StreamAudioSource?> clip2;
-  late final Future<StreamAudioSource?> clip3;
-  late final Future<StreamAudioSource?> clip4;
-  late final Future<StreamAudioSource?> clip5;
-  late final Future<StreamAudioSource?> clip6;
+  final Completer<StreamAudioSource?> clip1 = Completer<StreamAudioSource?>();
+  final Completer<StreamAudioSource?> clip2 = Completer<StreamAudioSource?>();
+  final Completer<StreamAudioSource?> clip3 = Completer<StreamAudioSource?>();
+  final Completer<StreamAudioSource?> clip4 = Completer<StreamAudioSource?>();
+  final Completer<StreamAudioSource?> clip5 = Completer<StreamAudioSource?>();
+  final Completer<StreamAudioSource?> clip6 = Completer<StreamAudioSource?>();
 
   // private constructor
   Backend._() {
@@ -41,22 +41,23 @@ class Backend {
     return _instance;
   }
 
+  /// Sets up clip completers
   void _init() async {
-    clip1 = _getClip(1);
-    await clip1;
-    clip2 = _getClip(2);
-    await clip2;
-    clip3 = _getClip(3);
-    await clip3;
-    clip4 = _getClip(4);
-    await clip4;
-    clip5 = _getClip(5);
-    await clip5;
-    clip6 = _getClip(6);
-    await clip6;
+    // wait for each clip to load before requesting the next
+    clip1.complete(_getClip(1));
+    await clip1.future;
+    clip2.complete(_getClip(2));
+    await clip2.future;
+    clip3.complete(_getClip(3));
+    await clip3.future;
+    clip4.complete(_getClip(4));
+    await clip4.future;
+    clip5.complete(_getClip(5));
+    await clip5.future;
+    clip6.complete(_getClip(6));
   }
 
-  /// returns a clip from backend
+  /// retrieves a clip from backend
   static Future<StreamAudioSource?> _getClip(int clipNum) async {
     // get data from backend
     try {
