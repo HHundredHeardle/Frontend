@@ -16,11 +16,14 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:http/http.dart' as http;
 
+import 'song-data.dart';
+
 /// Handles api calls. Singleton to allow it to load data from backend
 /// asynchronously
 class Backend {
   static const String _backendURL = String.fromEnvironment("BACKEND_URL");
 
+  final Future<SongData?> songData = _getSongData();
   final Completer<StreamAudioSource?> clip1 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip2 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip3 = Completer<StreamAudioSource?>();
@@ -43,6 +46,8 @@ class Backend {
 
   /// Sets up clip completers
   void _init() async {
+    // wait for answer data
+    await songData;
     // wait for each clip to load before requesting the next
     clip1.complete(_getClip(1));
     await clip1.future;
@@ -74,6 +79,30 @@ class Backend {
       }
     } catch (e) {
       debugPrint("Backend._getClip: e.toString: ${e.toString()}");
+      return null;
+    }
+  }
+
+  /// retrieves today's answer from backend
+  static Future<SongData?> _getSongData() async {
+    // get data from backend
+    try {
+      final response =
+          await http.get(Uri.https(_backendURL, "/api/current-song"));
+      if (response.statusCode == HttpStatus.ok) {
+        final jsonData = jsonDecode(response.body);
+        return SongData(
+            artist: jsonData["artist"],
+            title: jsonData["title"],
+            year: jsonData["year"],
+            place: jsonData["place"]);
+      } else {
+        debugPrint(
+            "Backend._getSongData: response.toString: ${response.toString()}");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("Backend._getSongData: e.toString: ${e.toString()}");
       return null;
     }
   }
