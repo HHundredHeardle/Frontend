@@ -24,6 +24,7 @@ class Backend {
   static const String _backendURL = String.fromEnvironment("BACKEND_URL");
 
   final Future<SongData?> songData = _getSongData();
+  final Future<List<String>?> answers = _getAnswers();
   final Completer<StreamAudioSource?> clip1 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip2 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip3 = Completer<StreamAudioSource?>();
@@ -48,6 +49,7 @@ class Backend {
   void _init() async {
     // wait for answer data
     await songData;
+    await answers;
     // wait for each clip to load before requesting the next
     clip1.complete(_getClip(1));
     await clip1.future;
@@ -103,6 +105,24 @@ class Backend {
       }
     } catch (e) {
       debugPrint("Backend._getSongData: e.toString: ${e.toString()}");
+      return null;
+    }
+  }
+
+  /// retrieves answers list
+  static Future<List<String>?> _getAnswers() async {
+    // get data from backend
+    try {
+      final response = await http.get(Uri.https(_backendURL, "/api/answers"));
+      if (response.statusCode == HttpStatus.ok) {
+        return List.from(jsonDecode(response.body));
+      } else {
+        debugPrint(
+            "Backend._getAnswers: response.toString: ${response.toString()}");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("Backend._getAnswers: e.toString: ${e.toString()}");
       return null;
     }
   }
