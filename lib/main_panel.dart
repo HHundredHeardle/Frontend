@@ -9,6 +9,8 @@ library;
 import 'package:flutter/material.dart';
 
 import 'playback.dart';
+import 'game_controller.dart';
+import 'backend.dart';
 
 /// Panel containing main game
 class HHMainPanel extends StatelessWidget {
@@ -61,8 +63,35 @@ class _HHGuessBox extends StatelessWidget {
 }
 
 /// Answer entry section
-class _HHAnswerEntry extends StatelessWidget {
+class _HHAnswerEntry extends StatefulWidget {
+  @override
+  State<_HHAnswerEntry> createState() => _HHAnswerEntryState();
+}
+
+class _HHAnswerEntryState extends State<_HHAnswerEntry> {
+  static const double _textBoxHeight = 68.0;
   static const EdgeInsets _answerEntryPadding = EdgeInsets.all(10.0);
+
+  final TextEditingController _textController = TextEditingController();
+  String? _errorText;
+
+  void _submitGuess() async {
+    if (!GameController().isComplete()) {
+      if (_textController.text.isEmpty) {
+        setState(() {
+          _errorText = "Answer cannot be blank";
+        });
+      } else if (!(await Backend().answers)!.contains(_textController.text)) {
+        setState(() {
+          _errorText = "Select an answer from the dropdown list";
+        });
+      } else {
+        GameController().guess(_textController.text);
+        // clear text after guess
+        _textController.text = "";
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +99,44 @@ class _HHAnswerEntry extends StatelessWidget {
       padding: _answerEntryPadding,
       child: Row(
         children: [
-          const Expanded(
-            child: TextField(),
+          Expanded(
+            child: SizedBox(
+              height: _textBoxHeight,
+              child: TextField(
+                decoration: InputDecoration(
+                  errorText: _errorText,
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                  errorBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+                controller: _textController,
+                onSubmitted: (_) {
+                  _submitGuess();
+                },
+                onChanged: (_) {
+                  setState(() {
+                    _errorText = null;
+                  });
+                },
+              ),
+            ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: _submitGuess,
             icon: const Icon(Icons.check),
+            tooltip: _textController.text,
           ),
         ],
       ),
