@@ -103,24 +103,7 @@ class _HHAnswerEntryState extends State<_HHAnswerEntry> {
             child: SizedBox(
               height: _textBoxHeight,
               child: TextField(
-                decoration: InputDecoration(
-                  errorText: _errorText,
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                  errorBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ),
+                decoration: _HHTextFieldDecoration(context, _errorText),
                 controller: _textController,
                 onSubmitted: (_) {
                   _submitGuess();
@@ -142,6 +125,29 @@ class _HHAnswerEntryState extends State<_HHAnswerEntry> {
       ),
     );
   }
+}
+
+/// Decoration for text field
+class _HHTextFieldDecoration extends InputDecoration {
+  _HHTextFieldDecoration(BuildContext context, String? errorText)
+      : super(
+          errorText: errorText,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
+        );
 }
 
 /// Holds the play button and information
