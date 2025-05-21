@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'backend.dart';
+import 'game_controller.dart';
 
 /// Button to play track
 class HHPlayButton extends StatefulWidget {
@@ -25,6 +26,15 @@ class _HHPlayButtonState extends State<HHPlayButton> {
   static const double _size = 40.0;
 
   @override
+  void initState() {
+    // rebuild widget when a guess is made
+    GameController().subscribeToGuess(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox.square(
       dimension: _size,
@@ -36,7 +46,15 @@ class _HHPlayButtonState extends State<HHPlayButton> {
           borderRadius: BorderRadius.circular(_iconRadius),
         ),
         child: FutureBuilder(
-          future: Backend().clip1.future,
+          future: switch (GameController().guesses) {
+            0 => Backend().clip1.future,
+            1 => Backend().clip2.future,
+            2 => Backend().clip3.future,
+            3 => Backend().clip4.future,
+            4 => Backend().clip5.future,
+            >= 5 => Backend().clip6.future,
+            int() => throw UnsupportedError("Invalid number of guesses"),
+          },
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {

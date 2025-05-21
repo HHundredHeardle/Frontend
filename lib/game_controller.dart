@@ -17,6 +17,7 @@ class GameController {
   final Future<String> _answer = _getAnswer();
   final Completer<Result> _resultCompleter = Completer<Result>();
   late final Future<Result> result;
+  final List<void Function()> _guessSubscriptions = [];
   int guesses = 0;
 
   // private constructor
@@ -40,6 +41,7 @@ class GameController {
   /// handles guess logic
   void guess(String guess) async {
     if (!_resultCompleter.isCompleted) {
+      _guessNotify();
       if (guess == (await _answer)) {
         _resultCompleter.complete(Result.win);
         print("you won");
@@ -56,6 +58,18 @@ class GameController {
   /// Returns if a result has been decided
   bool isComplete() {
     return _resultCompleter.isCompleted;
+  }
+
+  /// adds a function to be run when a guess is made
+  void subscribeToGuess(void Function() onGuess) {
+    _guessSubscriptions.add(onGuess);
+  }
+
+  /// Runs provided subscription functions
+  void _guessNotify() {
+    for (void Function() function in _guessSubscriptions) {
+      function();
+    }
   }
 }
 
