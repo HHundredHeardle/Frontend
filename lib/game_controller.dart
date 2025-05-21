@@ -34,7 +34,7 @@ class GameController {
 
   static Future<String> _getAnswer() async {
     Backend backend = Backend();
-    return "${(await backend.songData)!.title} - ${(await backend.songData)!.artist}";
+    return "${(await backend.songData.future)!.title} - ${(await backend.songData.future)!.artist}";
   }
 
   /// handles guess logic

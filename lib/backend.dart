@@ -23,8 +23,8 @@ import 'song_data.dart';
 class Backend {
   static const String _backendURL = String.fromEnvironment("BACKEND_URL");
 
-  final Future<SongData?> songData = _getSongData();
-  final Future<List<String>?> answers = _getAnswers();
+  final Completer<SongData?> songData = Completer<SongData?>();
+  final Completer<List<String>?> answers = Completer<List<String>?>();
   final Completer<StreamAudioSource?> clip1 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip2 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip3 = Completer<StreamAudioSource?>();
@@ -48,20 +48,15 @@ class Backend {
   /// Sets up clip completers
   void _init() async {
     // wait for answer data
-    await songData;
-    await answers;
+    songData.complete(await _getSongData());
+    answers.complete(await _getAnswers());
     // wait for each clip to load before requesting the next
-    clip1.complete(_getClip(1));
-    await clip1.future;
-    clip2.complete(_getClip(2));
-    await clip2.future;
-    clip3.complete(_getClip(3));
-    await clip3.future;
-    clip4.complete(_getClip(4));
-    await clip4.future;
-    clip5.complete(_getClip(5));
-    await clip5.future;
-    clip6.complete(_getClip(6));
+    clip1.complete(await _getClip(1));
+    clip2.complete(await _getClip(2));
+    clip3.complete(await _getClip(3));
+    clip4.complete(await _getClip(4));
+    clip5.complete(await _getClip(5));
+    clip6.complete(await _getClip(6));
   }
 
   /// retrieves a clip from backend

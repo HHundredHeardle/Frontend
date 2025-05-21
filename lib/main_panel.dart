@@ -71,17 +71,28 @@ class _HHAnswerEntry extends StatefulWidget {
 class _HHAnswerEntryState extends State<_HHAnswerEntry> {
   static const double _textBoxHeight = 68.0;
   static const EdgeInsets _answerEntryPadding = EdgeInsets.all(10.0);
+  static const double _loadingIndicatorStrokeWidth = 1.0;
 
   final TextEditingController _textController = TextEditingController();
   String? _errorText;
+  bool _textFieldEnabled = true;
 
+  @override
+  void initState() {
+    _disableOnResult();
+    super.initState();
+  }
+
+  /// Handles text field logic for guesses
   void _submitGuess() async {
+    _awaitAnswers();
     if (!GameController().isComplete()) {
       if (_textController.text.isEmpty) {
         setState(() {
           _errorText = "Answer cannot be blank";
         });
-      } else if (!(await Backend().answers)!.contains(_textController.text)) {
+      } else if (!(await Backend().answers.future)!
+          .contains(_textController.text)) {
         setState(() {
           _errorText = "Select an answer from the dropdown list";
         });
@@ -93,6 +104,27 @@ class _HHAnswerEntryState extends State<_HHAnswerEntry> {
     }
   }
 
+  /// Disables text field while answers are loading
+  void _awaitAnswers() async {
+    if (!Backend().answers.isCompleted) {
+      setState(() {
+        _textFieldEnabled = false;
+      });
+      await Backend().answers.future;
+      setState(() {
+        _textFieldEnabled = true;
+      });
+    }
+  }
+
+  /// Disables textfield on game win
+  void _disableOnResult() async {
+    await GameController().result;
+    setState(() {
+      _textFieldEnabled = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -102,9 +134,17 @@ class _HHAnswerEntryState extends State<_HHAnswerEntry> {
           Expanded(
             child: SizedBox(
               height: _textBoxHeight,
+
+              // text field
               child: TextField(
+                enabled: _textFieldEnabled,
                 decoration: _HHTextFieldDecoration(context, _errorText),
                 controller: _textController,
+                style: TextStyle(
+                  color: _textFieldEnabled
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.tertiary,
+                ),
                 onSubmitted: (_) {
                   _submitGuess();
                 },
@@ -116,11 +156,18 @@ class _HHAnswerEntryState extends State<_HHAnswerEntry> {
               ),
             ),
           ),
-          IconButton(
-            onPressed: _submitGuess,
-            icon: const Icon(Icons.check),
-            tooltip: _textController.text,
-          ),
+
+          // submit button
+          (_textFieldEnabled || GameController().isComplete())
+              ? IconButton(
+                  onPressed: _submitGuess,
+                  icon: const Icon(Icons.check),
+                  tooltip: _textController.text,
+                )
+              : const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: _loadingIndicatorStrokeWidth,
+                ),
         ],
       ),
     );
