@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: dart-import-sorter
+        name: dart import sorter
+        description: Sort imports in Dart files
+        entry: dart
+        language: system
+        types: [dart]
+        files: ^lib/
+        args: [run, import_sorter:main, --no-comments]
+      - id: dart-format
+        name: dart format
+        description: Format Dart files
+        entry: dart format
+        language: system
+        types: [dart]
+        files: ^lib/

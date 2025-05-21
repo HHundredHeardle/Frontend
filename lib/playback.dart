@@ -7,6 +7,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import 'package:just_audio/just_audio.dart';
 
 import 'backend.dart';
@@ -42,7 +43,8 @@ class _HHPlayButtonState extends State<HHPlayButton> {
                 return _HHAudioPlayer(snapshot.data!);
               } else {
                 debugPrint(
-                    "_HHPlayButtonState.build: snapshot.toString(): ${snapshot.toString()}");
+                  "_HHPlayButtonState.build: snapshot.toString(): ${snapshot.toString()}",
+                );
                 return const Tooltip(
                   message: "Error loading audio",
                   child: Icon(Icons.error),

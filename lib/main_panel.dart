@@ -8,9 +8,9 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'playback.dart';
-import 'game_controller.dart';
 import 'backend.dart';
+import 'game_controller.dart';
+import 'playback.dart';
 
 /// Panel containing main game
 class HHMainPanel extends StatelessWidget {
@@ -34,7 +34,9 @@ class HHMainPanel extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: _HHGuesses()),
+              Expanded(
+                child: _HHGuesses(),
+              ),
               _HHTrackPlayer(),
               _HHAnswerEntry(),
             ],

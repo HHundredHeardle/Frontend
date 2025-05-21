@@ -8,13 +8,14 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:just_audio/just_audio.dart';
 
 import 'song_data.dart';
 
@@ -71,7 +72,8 @@ class Backend {
         return _BackendAudioSource(audioBytes);
       } else {
         debugPrint(
-            "Backend._getClip: response.toString: ${response.toString()}");
+          "Backend._getClip: response.toString: ${response.toString()}",
+        );
         return null;
       }
     } catch (e) {
@@ -89,13 +91,15 @@ class Backend {
       if (response.statusCode == HttpStatus.ok) {
         final jsonData = jsonDecode(response.body);
         return SongData(
-            artist: jsonData["artist"],
-            title: jsonData["title"],
-            year: jsonData["year"],
-            place: jsonData["place"]);
+          artist: jsonData["artist"],
+          title: jsonData["title"],
+          year: jsonData["year"],
+          place: jsonData["place"],
+        );
       } else {
         debugPrint(
-            "Backend._getSongData: response.toString: ${response.toString()}");
+          "Backend._getSongData: response.toString: ${response.toString()}",
+        );
         return null;
       }
     } catch (e) {
@@ -113,7 +117,8 @@ class Backend {
         return List.from(jsonDecode(response.body));
       } else {
         debugPrint(
-            "Backend._getAnswers: response.toString: ${response.toString()}");
+          "Backend._getAnswers: response.toString: ${response.toString()}",
+        );
         return null;
       }
     } catch (e) {
