@@ -14,15 +14,23 @@ import 'backend.dart';
 class GameController {
   static const int _maxGuesses = 5;
 
-  final Future<String> _answer = _getAnswer();
+  final Future<String> _answer = (() async {
+    Backend backend = Backend();
+    return "${(await backend.songData.future)!.title} - ${(await backend.songData.future)!.artist}";
+  })();
   final Completer<Result> _resultCompleter = Completer<Result>();
+  final GameEvent guessMade = GameEvent();
+  late final GameEvent gameOver;
   late final Future<Result> result;
-  final List<void Function()> _guessSubscriptions = [];
   int guesses = 0;
 
   // private constructor
   GameController._() {
     result = _resultCompleter.future;
+    guessMade.subscribe(() {
+      guesses++;
+    });
+    gameOver = GameEvent.withTrigger(result);
   }
 
   // Singleton instance
@@ -33,23 +41,15 @@ class GameController {
     return _instance;
   }
 
-  static Future<String> _getAnswer() async {
-    Backend backend = Backend();
-    return "${(await backend.songData.future)!.title} - ${(await backend.songData.future)!.artist}";
-  }
-
   /// handles guess logic
   void guess(String guess) async {
     if (!_resultCompleter.isCompleted) {
-      _guessNotify();
+      guessMade.trigger();
       if (guess == (await _answer)) {
         _resultCompleter.complete(Result.win);
-        print("you won");
       } else {
-        guesses++;
         if (guesses > _maxGuesses) {
           _resultCompleter.complete(Result.lose);
-          print("you lost");
         }
       }
     }
@@ -59,17 +59,35 @@ class GameController {
   bool isComplete() {
     return _resultCompleter.isCompleted;
   }
+}
 
-  /// adds a function to be run when a guess is made
-  void subscribeToGuess(void Function() onGuess) {
-    _guessSubscriptions.add(onGuess);
+/// Handles game events
+class GameEvent {
+  final List<void Function()> _subscriptions = [];
+
+  GameEvent();
+
+  /// Registers future which triggers event
+  GameEvent.withTrigger(Future event) {
+    _setTrigger(event);
   }
 
-  /// Runs provided subscription functions
-  void _guessNotify() {
-    for (void Function() function in _guessSubscriptions) {
+  /// triggers event when future completes
+  void _setTrigger(Future event) async {
+    await event;
+    trigger();
+  }
+
+  /// calls all subscribed functions
+  void trigger() {
+    for (void Function() function in _subscriptions) {
       function();
     }
+  }
+
+  /// registers a function to be called when this event is triggered
+  void subscribe(void Function() function) {
+    _subscriptions.add(function);
   }
 }
 

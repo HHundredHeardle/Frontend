@@ -215,7 +215,7 @@ class _HHTrackPlayer extends StatelessWidget {
         padding: _playerPadding,
         child: Row(
           children: [
-            HHPlayButton(),
+            HHAudioController(),
           ],
         ),
       ),
