@@ -22,12 +22,14 @@ void main() {
 }
 
 class HHundredHeardle extends StatelessWidget {
+  static const String _title = 'Hottest Hundred Heardle';
+
   const HHundredHeardle({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: _title,
       theme: ThemeData(
         colorScheme: ColorScheme(
           brightness: Brightness.dark,
@@ -45,7 +47,7 @@ class HHundredHeardle extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainPage(title: 'Hottest Hundred Heardle'),
+      home: const MainPage(title: _title),
     );
   }
 }
