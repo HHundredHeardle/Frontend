@@ -72,12 +72,14 @@ class Backend {
         return _BackendAudioSource(audioBytes);
       } else {
         debugPrint(
-          "Backend._getClip: response.toString: ${response.toString()}",
+          "${(Backend).toString()}._getClip: response.toString: ${response.toString()}",
         );
         return null;
       }
     } catch (e) {
-      debugPrint("Backend._getClip: e.toString: ${e.toString()}");
+      debugPrint(
+        "${(Backend).toString()}._getClip: e.toString: ${e.toString()}",
+      );
       return null;
     }
   }
@@ -98,12 +100,14 @@ class Backend {
         );
       } else {
         debugPrint(
-          "Backend._getSongData: response.toString: ${response.toString()}",
+          "${(Backend).toString()}._getSongData: response.toString: ${response.toString()}",
         );
         return null;
       }
     } catch (e) {
-      debugPrint("Backend._getSongData: e.toString: ${e.toString()}");
+      debugPrint(
+        "${(Backend).toString()}._getSongData: e.toString: ${e.toString()}",
+      );
       return null;
     }
   }
@@ -117,12 +121,14 @@ class Backend {
         return List.from(jsonDecode(response.body));
       } else {
         debugPrint(
-          "Backend._getAnswers: response.toString: ${response.toString()}",
+          "${(Backend).toString()}._getAnswers: response.toString: ${response.toString()}",
         );
         return null;
       }
     } catch (e) {
-      debugPrint("Backend._getAnswers: e.toString: ${e.toString()}");
+      debugPrint(
+        "${(Backend).toString()}._getAnswers: e.toString: ${e.toString()}",
+      );
       return null;
     }
   }
