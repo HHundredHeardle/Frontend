@@ -13,15 +13,42 @@ import 'package:just_audio/just_audio.dart';
 import 'backend.dart';
 import 'game_controller.dart';
 
-/// Button to play track
-class HHAudioController extends StatefulWidget {
-  const HHAudioController({super.key});
+/// Holds the play button and information
+class HHTrackPlayer extends StatelessWidget {
+  static const EdgeInsets _playerPadding = EdgeInsets.all(10.0);
+
+  const HHTrackPlayer({super.key});
 
   @override
-  State<HHAudioController> createState() => _HHAudioControllerState();
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+      ),
+      child: const Padding(
+        padding: _playerPadding,
+        child: Row(
+          children: [
+            _HHAudioController(),
+            // playback bar
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _HHAudioControllerState extends State<HHAudioController> {
+/// Button to play track
+class _HHAudioController extends StatefulWidget {
+  const _HHAudioController();
+
+  @override
+  State<_HHAudioController> createState() => _HHAudioControllerState();
+}
+
+class _HHAudioControllerState extends State<_HHAudioController> {
   static const double _iconRadius = 24.0;
   static const double _size = 40.0;
 
@@ -65,7 +92,7 @@ class _HHAudioControllerState extends State<HHAudioController> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
-                return _HHPlayButton();
+                return const _HHPlayButton();
               } else {
                 debugPrint(
                   "_HHPlayButtonState.build: snapshot.toString(): ${snapshot.toString()}",
@@ -128,6 +155,8 @@ class _HHAudioPlayer extends AudioPlayer {
 
 /// The play/pause button that responds to audio state
 class _HHPlayButton extends StatefulWidget {
+  const _HHPlayButton();
+
   @override
   State<_HHPlayButton> createState() => _HHPlayButtonState();
 }

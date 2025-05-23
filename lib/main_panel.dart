@@ -29,15 +29,15 @@ class HHMainPanel extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(_borderPadding),
+        child: const Padding(
+          padding: EdgeInsets.all(_borderPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: _HHGuesses(),
               ),
-              _HHTrackPlayer(),
+              HHTrackPlayer(),
               _HHAnswerEntry(),
             ],
           ),
@@ -50,6 +50,8 @@ class HHMainPanel extends StatelessWidget {
 /// Panel showing result of a specific guess
 class _HHGuessBox extends StatelessWidget {
   static const double _guessBoxGap = 10.0;
+
+  const _HHGuessBox();
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +68,8 @@ class _HHGuessBox extends StatelessWidget {
 
 /// Answer entry section
 class _HHAnswerEntry extends StatefulWidget {
+  const _HHAnswerEntry();
+
   @override
   State<_HHAnswerEntry> createState() => _HHAnswerEntryState();
 }
@@ -199,34 +203,12 @@ class _HHTextFieldDecoration extends InputDecoration {
         );
 }
 
-/// Holds the play button and information
-class _HHTrackPlayer extends StatelessWidget {
-  static const EdgeInsets _playerPadding = EdgeInsets.all(10.0);
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-      ),
-      child: const Padding(
-        padding: _playerPadding,
-        child: Row(
-          children: [
-            HHAudioController(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _HHGuesses extends StatelessWidget {
+  const _HHGuesses();
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         _HHGuessBox(),
         _HHGuessBox(),

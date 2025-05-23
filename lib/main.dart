@@ -52,16 +52,11 @@ class HHundredHeardle extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.title});
-
+class MainPage extends StatelessWidget {
   final String title;
 
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
+  const MainPage({super.key, required this.title});
 
-class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
