@@ -4,9 +4,12 @@
 /// Widgets for handling guess logic and feedback
 ///
 /// Authors: Joshua Linehan
+// ignore_for_file: require_trailing_commas
+
 library;
 
 import 'package:flutter/material.dart';
+import "package:flutter/scheduler.dart";
 
 import 'backend.dart';
 import 'game_controller.dart';
@@ -41,6 +44,10 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   static const double _textBoxHeight = 68.0;
   static const EdgeInsets _answerEntryPadding = EdgeInsets.all(10.0);
   static const double _loadingIndicatorStrokeWidth = 1.0;
+  static const double _textHighlightOpacity = 0.4;
+  static const double _optionsMaxWidth = 500.0;
+  static const double _optionsMaxHeight = 690.0;
+  static const int _hoverColorBlendAlpha = 22;
 
   String? _errorText;
   bool _textFieldEnabled = true;
@@ -110,7 +117,6 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
           Expanded(
             child: SizedBox(
               height: _textBoxHeight,
-
               // text field
               child: Autocomplete<String>(
                 optionsBuilder: (textEditingValue) async =>
@@ -129,14 +135,13 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                                 (j < answer.length)) {
                               if (enteredText[i] == answer[j]) {
                                 i++;
-                              } else {
-                                j++;
                               }
+                              j++;
                             }
                             return (i >= enteredText.length);
                           },
                         ),
-                      false => const Iterable.empty(),
+                      false => const ["Loading..."],
                     }
                 },
                 fieldViewBuilder: (
@@ -146,22 +151,97 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                   onFieldSubmitted,
                 ) {
                   _autocompleteController = textEditingController;
-                  return TextField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    enabled: _textFieldEnabled,
-                    onSubmitted: (_) => _submitGuess(),
-                    decoration: _HHTextFieldDecoration(context, _errorText),
-                    style: TextStyle(
-                      color: _textFieldEnabled
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.tertiary,
+                  return TextSelectionTheme(
+                    data: TextSelectionThemeData(
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      selectionColor: Theme.of(context)
+                          .colorScheme
+                          .onPrimary
+                          .withOpacity(_textHighlightOpacity),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        _errorText = null;
-                      });
-                    },
+                    child: TextField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      enabled: _textFieldEnabled,
+                      onSubmitted: (_) => _submitGuess(),
+                      decoration: _HHTextFieldDecoration(context, _errorText),
+                      style: TextStyle(
+                        color: _textFieldEnabled
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).colorScheme.tertiary,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _errorText = null;
+                        });
+                      },
+                    ),
+                  );
+                },
+                optionsViewOpenDirection: OptionsViewOpenDirection.up,
+                optionsViewBuilder: (context, onSelected, options) {
+                  return Align(
+                    alignment: AlignmentDirectional.bottomStart,
+                    child: Material(
+                      elevation: 4.0,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: _optionsMaxWidth,
+                          maxHeight: _optionsMaxHeight,
+                        ),
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemCount: options.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final String option = options.elementAt(index);
+                            return Backend().answers.isCompleted
+                                ? InkWell(
+                                    hoverColor: Color.alphaBlend(
+                                        Colors.white
+                                            .withAlpha(_hoverColorBlendAlpha),
+                                        Theme.of(context).hoverColor),
+                                    onTap: () {
+                                      onSelected(option);
+                                    },
+                                    child: Builder(
+                                        builder: (BuildContext context) {
+                                      final bool highlight =
+                                          AutocompleteHighlightedOption.of(
+                                                  context) ==
+                                              index;
+                                      if (highlight) {
+                                        SchedulerBinding.instance
+                                            .addPostFrameCallback(
+                                          (Duration timeStamp) {
+                                            Scrollable.ensureVisible(context);
+                                          },
+                                        );
+                                      }
+                                      return Container(
+                                        color: highlight
+                                            ? Theme.of(context).focusColor
+                                            : null,
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text(option),
+                                      );
+                                    }),
+                                  )
+                                : Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      option,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                      ),
+                                    ),
+                                  );
+                          },
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
