@@ -42,9 +42,9 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   static const EdgeInsets _answerEntryPadding = EdgeInsets.all(10.0);
   static const double _loadingIndicatorStrokeWidth = 1.0;
 
-  final TextEditingController _textController = TextEditingController();
   String? _errorText;
   bool _textFieldEnabled = true;
+  TextEditingController? _autocompleteController;
 
   @override
   void initState() {
@@ -54,21 +54,28 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
   /// Handles text field logic for guesses
   void _submitGuess() async {
+    // require controller
+    if (_autocompleteController == null) {
+      return;
+    }
     _awaitAnswers();
     if (!GameController().isComplete()) {
-      if (_textController.text.isEmpty) {
+      if (_autocompleteController!.text.isEmpty) {
         setState(() {
           _errorText = "Answer cannot be blank";
         });
       } else if (!(await Backend().answers.future)!
-          .contains(_textController.text)) {
+          .contains(_autocompleteController!.text)) {
         setState(() {
           _errorText = "Select an answer from the dropdown list";
         });
       } else {
-        GameController().guess(_textController.text);
-        // clear text after guess
-        _textController.text = "";
+        GameController().guess(_autocompleteController!.text);
+        // clear guess when submitted
+        _autocompleteController!.text = "";
+        setState(() {
+          _errorText = null;
+        });
       }
     }
   }
@@ -105,22 +112,57 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
               height: _textBoxHeight,
 
               // text field
-              child: TextField(
-                enabled: _textFieldEnabled,
-                decoration: _HHTextFieldDecoration(context, _errorText),
-                controller: _textController,
-                style: TextStyle(
-                  color: _textFieldEnabled
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.tertiary,
-                ),
-                onSubmitted: (_) {
-                  _submitGuess();
+              child: Autocomplete<String>(
+                optionsBuilder: (textEditingValue) async =>
+                    switch (textEditingValue.text.isEmpty) {
+                  true => const Iterable.empty(),
+                  false => switch (Backend().answers.isCompleted) {
+                      true => (await Backend().answers.future)!.where(
+                          (element) {
+                            String enteredText =
+                                textEditingValue.text.toLowerCase();
+                            String answer = element.toLowerCase();
+                            int i = 0;
+                            int j = 0;
+                            // check every character in entered text appears in answer
+                            while ((i < enteredText.length) &&
+                                (j < answer.length)) {
+                              if (enteredText[i] == answer[j]) {
+                                i++;
+                              } else {
+                                j++;
+                              }
+                            }
+                            return (i >= enteredText.length);
+                          },
+                        ),
+                      false => const Iterable.empty(),
+                    }
                 },
-                onChanged: (_) {
-                  setState(() {
-                    _errorText = null;
-                  });
+                fieldViewBuilder: (
+                  context,
+                  textEditingController,
+                  focusNode,
+                  onFieldSubmitted,
+                ) {
+                  _autocompleteController = textEditingController;
+                  return TextField(
+                    controller: textEditingController,
+                    focusNode: focusNode,
+                    enabled: _textFieldEnabled,
+                    onSubmitted: (_) => _submitGuess(),
+                    decoration: _HHTextFieldDecoration(context, _errorText),
+                    style: TextStyle(
+                      color: _textFieldEnabled
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.tertiary,
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _errorText = null;
+                      });
+                    },
+                  );
                 },
               ),
             ),
@@ -131,7 +173,6 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
               ? IconButton(
                   onPressed: _submitGuess,
                   icon: const Icon(Icons.check),
-                  tooltip: _textController.text,
                 )
               : const CircularProgressIndicator(
                   color: Colors.white,
