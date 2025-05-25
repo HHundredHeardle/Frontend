@@ -16,17 +16,20 @@ import 'game_controller.dart';
 
 /// Widget group containing guess boxes
 class HHGuesses extends StatelessWidget {
+  static const Widget _separator = SizedBox(
+    height: 10.0,
+  );
+
   const HHGuesses({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        _HHGuessBox(),
-        _HHGuessBox(),
-        _HHGuessBox(),
-        _HHGuessBox(),
-        _HHGuessBox(),
+        for (int i = 0; i < GameController.maxGuesses; i++) ...[
+          const _HHGuessBox(),
+          _separator,
+        ]
       ],
     );
   }
@@ -280,18 +283,13 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
 /// Panel showing result of a specific guess
 class _HHGuessBox extends StatelessWidget {
-  static const double _guessBoxGap = 10.0;
-
   const _HHGuessBox();
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: _guessBoxGap),
-        child: Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-        ),
+      child: Container(
+        color: Theme.of(context).colorScheme.primaryContainer,
       ),
     );
   }

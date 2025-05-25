@@ -8,11 +8,13 @@ library;
 
 import "dart:async";
 
+import "package:flutter/material.dart";
+
 import 'backend.dart';
 
 /// Controls game logic and events
 class GameController {
-  static const int _maxGuesses = 5;
+  static const int maxGuesses = 6;
 
   final Future<String> _answer = (() async {
     Backend backend = Backend();
@@ -20,16 +22,19 @@ class GameController {
   })();
   final Completer<Result> _resultCompleter = Completer<Result>();
   final GameEvent guessMade = GameEvent();
+  final List<Completer<Guess>> _guessCompleters = [
+    for (int i = 0; i < maxGuesses; i++) Completer<Guess>(),
+  ];
+  late final List<Future<Guess>> _guesses;
   late final GameEvent gameOver;
   late final Future<Result> result;
-  int guesses = 0;
 
   // private constructor
   GameController._() {
     result = _resultCompleter.future;
-    guessMade.subscribe(() {
-      guesses++;
-    });
+    _guesses = [
+      for (Completer<Guess> completer in _guessCompleters) completer.future,
+    ];
     gameOver = GameEvent.withTrigger(result);
   }
 
@@ -41,17 +46,39 @@ class GameController {
     return _instance;
   }
 
+  /// returns the number of guesses that have been made
+  int numGuesses() {
+    int count = 0;
+    for (Completer completer in _guessCompleters) {
+      if (completer.isCompleted) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+
+  /// returns the nth guess (starting from 1)
+  Future<Guess> getGuess(int guessNumber) {
+    return _guesses[guessNumber - 1];
+  }
+
   /// handles guess logic
   void guess(String guess) async {
     if (!_resultCompleter.isCompleted) {
-      guessMade.trigger();
       if (guess == (await _answer)) {
+        _guessCompleters[numGuesses()]
+            .complete(Guess(guess, GuessResult.correct));
         _resultCompleter.complete(Result.win);
       } else {
-        if (guesses > _maxGuesses) {
+        _guessCompleters[numGuesses()]
+            .complete(Guess(guess, GuessResult.incorrect));
+        if (numGuesses() >= maxGuesses) {
           _resultCompleter.complete(Result.lose);
         }
       }
+      guessMade.trigger();
     }
   }
 
@@ -91,5 +118,28 @@ class GameEvent {
   }
 }
 
+/// represents a guess
+class Guess {
+  final String guess;
+  final GuessResult result;
+  Guess(this.guess, this.result);
+}
+
+/// Icon displayed in guess result
+class GuessResultIcon extends Icon {
+  const GuessResultIcon(IconData super.icon, Color color, {super.key})
+      : super(color: color);
+}
+
 /// Represents game results
 enum Result { win, lose }
+
+/// Represents guess results
+enum GuessResult {
+  correct(icon: GuessResultIcon(Icons.check, Colors.green)),
+  incorrect(icon: GuessResultIcon(Icons.close, Colors.red));
+
+  const GuessResult({required this.icon});
+
+  final GuessResultIcon icon;
+}

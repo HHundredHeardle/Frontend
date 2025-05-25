@@ -75,7 +75,7 @@ class _HHAudioControllerState extends State<_HHAudioController> {
         child: FutureBuilder(
           future: (GameController().isComplete()
                   ? Backend().clip6.future
-                  : switch (GameController().guesses) {
+                  : switch (GameController().numGuesses()) {
                       0 => Backend().clip1.future,
                       1 => Backend().clip2.future,
                       2 => Backend().clip3.future,
