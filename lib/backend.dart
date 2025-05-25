@@ -49,15 +49,33 @@ class Backend {
   /// Sets up clip completers
   void _init() async {
     // wait for answer data
-    songData.complete(await _getSongData());
-    answers.complete(await _getAnswers());
+    await Future.wait([
+      _getSongData().then(
+        (value) => songData.complete(value),
+      ),
+      _getAnswers().then(
+        (value) => answers.complete(value),
+      ),
+    ]);
     // wait for each clip to load before requesting the next
-    clip1.complete(await _getClip(1));
-    clip2.complete(await _getClip(2));
-    clip3.complete(await _getClip(3));
-    clip4.complete(await _getClip(4));
-    clip5.complete(await _getClip(5));
-    clip6.complete(await _getClip(6));
+    await _getClip(1).then(
+      (value) => clip1.complete(value),
+    );
+    await _getClip(2).then(
+      (value) => clip2.complete(value),
+    );
+    await _getClip(3).then(
+      (value) => clip3.complete(value),
+    );
+    await _getClip(4).then(
+      (value) => clip4.complete(value),
+    );
+    await _getClip(5).then(
+      (value) => clip5.complete(value),
+    );
+    await _getClip(6).then(
+      (value) => clip6.complete(value),
+    );
   }
 
   /// retrieves a clip from backend

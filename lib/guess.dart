@@ -48,6 +48,8 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   static const double _optionsMaxWidth = 500.0;
   static const double _optionsMaxHeight = 690.0;
   static const int _hoverColorBlendAlpha = 22;
+  static const EdgeInsets _optionPadding = EdgeInsets.all(16.0);
+  static const double _optionElevation = 4.0;
 
   String? _errorText;
   bool _textFieldEnabled = true;
@@ -56,6 +58,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   @override
   void initState() {
     _disableOnResult();
+    _reloadOnAnswerLoad();
     super.initState();
   }
 
@@ -108,6 +111,14 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
     });
   }
 
+  /// reloads widget when answers load
+  void _reloadOnAnswerLoad() async {
+    await Backend().answers.future;
+    setState(() {});
+    // trigger a rebuild of options
+    _autocompleteController!.text = _autocompleteController!.text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -123,6 +134,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                     switch (textEditingValue.text.isEmpty) {
                   true => const Iterable.empty(),
                   false => switch (Backend().answers.isCompleted) {
+                      false => const ["Loading..."],
                       true => (await Backend().answers.future)!.where(
                           (element) {
                             String enteredText =
@@ -140,8 +152,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                             }
                             return (i >= enteredText.length);
                           },
-                        ),
-                      false => const ["Loading..."],
+                        )
                     }
                 },
                 fieldViewBuilder: (
@@ -183,7 +194,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                   return Align(
                     alignment: AlignmentDirectional.bottomStart,
                     child: Material(
-                      elevation: 4.0,
+                      elevation: _optionElevation,
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(
                           maxWidth: _optionsMaxWidth,
@@ -198,9 +209,10 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                             return Backend().answers.isCompleted
                                 ? InkWell(
                                     hoverColor: Color.alphaBlend(
-                                        Colors.white
-                                            .withAlpha(_hoverColorBlendAlpha),
-                                        Theme.of(context).hoverColor),
+                                      Colors.white
+                                          .withAlpha(_hoverColorBlendAlpha),
+                                      Theme.of(context).hoverColor,
+                                    ),
                                     onTap: () {
                                       onSelected(option);
                                     },
@@ -222,19 +234,21 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                                         color: highlight
                                             ? Theme.of(context).focusColor
                                             : null,
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Text(option),
+                                        padding: _optionPadding,
+                                        child: Text(
+                                          option,
+                                        ),
                                       );
                                     }),
                                   )
                                 : Container(
-                                    padding: const EdgeInsets.all(16.0),
+                                    padding: _optionPadding,
                                     child: Text(
                                       option,
                                       style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onPrimary,
+                                            .primaryContainer,
                                       ),
                                     ),
                                   );
