@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'playback.dart';
 import "guess.dart";
+import 'result.dart';
 
 /// Panel containing main game
 class HHMainPanel extends StatelessWidget {
@@ -38,6 +39,7 @@ class HHMainPanel extends StatelessWidget {
               ),
               HHTrackPlayer(),
               HHAnswerEntry(),
+              HHResults(),
             ],
           ),
         ),
