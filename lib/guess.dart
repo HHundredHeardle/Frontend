@@ -27,7 +27,7 @@ class HHGuesses extends StatelessWidget {
     return Column(
       children: [
         for (int i = 0; i < GameController.maxGuesses; i++) ...[
-          const _HHGuessBox(),
+          _HHGuessBox(GameController().getGuess(i + 1)),
           _separator,
         ]
       ],
@@ -268,7 +268,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
           // submit button
           (_textFieldEnabled || GameController().isComplete())
               ? IconButton(
-                  onPressed: _submitGuess,
+                  onPressed: _textFieldEnabled ? _submitGuess : null,
                   icon: const Icon(Icons.check),
                 )
               : const CircularProgressIndicator(
@@ -283,13 +283,42 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
 /// Panel showing result of a specific guess
 class _HHGuessBox extends StatelessWidget {
-  const _HHGuessBox();
+  static const EdgeInsets _guessBoxPadding = EdgeInsets.all(16.0);
+
+  final Future<Guess> guess;
+
+  const _HHGuessBox(this.guess);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        color: Theme.of(context).colorScheme.primaryContainer,
+      child: FutureBuilder(
+        future: guess,
+        builder: (context, snapshot) => Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          child: Center(
+            child: Padding(
+              padding: _guessBoxPadding,
+              child: (snapshot.connectionState == ConnectionState.done)
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            snapshot.data!.guess,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        snapshot.data!.result.icon
+                      ],
+                    )
+                  : null,
+            ),
+          ),
+        ),
       ),
     );
   }
