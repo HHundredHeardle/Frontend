@@ -60,6 +60,13 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
   @override
   void initState() {
+    GameController().duplicateGuess.subscribe(
+      () {
+        setState(() {
+          _errorText = "Answer has already been entered";
+        });
+      },
+    );
     _disableOnResult();
     _reloadOnAnswerLoad();
     super.initState();

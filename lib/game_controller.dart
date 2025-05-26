@@ -22,6 +22,7 @@ class GameController {
   })();
   final Completer<Result> _resultCompleter = Completer<Result>();
   final GameEvent guessMade = GameEvent();
+  final GameEvent duplicateGuess = GameEvent();
   final List<Completer<Guess>> _guessCompleters = [
     for (int i = 0; i < maxGuesses; i++) Completer<Guess>(),
   ];
@@ -67,7 +68,19 @@ class GameController {
   /// handles guess logic
   void guess(String guess) async {
     if (!_resultCompleter.isCompleted) {
-      if (guess == (await _answer)) {
+      String answer = await _answer;
+      // check for duplicate guesses
+      for (Completer<Guess> completer in _guessCompleters) {
+        if (completer.isCompleted) {
+          if ((await completer.future).guess == guess) {
+            duplicateGuess.trigger();
+            return;
+          }
+        } else {
+          break;
+        }
+      }
+      if (guess == answer) {
         _guessCompleters[numGuesses()]
             .complete(Guess(guess, GuessResult.correct));
         _resultCompleter.complete(Result.win);
