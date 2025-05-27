@@ -8,6 +8,8 @@
 
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import "package:flutter/scheduler.dart";
 
@@ -57,6 +59,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   String? _errorText;
   bool _textFieldEnabled = true;
   TextEditingController? _autocompleteController;
+  FocusNode? _focusNode;
 
   @override
   void initState() {
@@ -135,6 +138,21 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
       padding: _answerEntryPadding,
       child: Row(
         children: [
+          // pass button
+          TextButton(
+            onPressed: () => GameController().pass(),
+            child: Text(
+              "PASS",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+
+          // Search button
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => FocusScope.of(context).requestFocus(_focusNode),
+          ),
+
           Expanded(
             child: SizedBox(
               height: _textBoxHeight,
@@ -172,6 +190,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                   onFieldSubmitted,
                 ) {
                   _autocompleteController = textEditingController;
+                  _focusNode = focusNode;
                   return TextSelectionTheme(
                     data: TextSelectionThemeData(
                       cursorColor: Theme.of(context).colorScheme.onPrimary,
@@ -316,6 +335,11 @@ class _HHGuessBox extends StatelessWidget {
                         Expanded(
                           child: Text(
                             snapshot.data!.guess,
+                            style: TextStyle(
+                              color: (snapshot.data!.result == GuessResult.pass)
+                                  ? Theme.of(context).disabledColor
+                                  : null,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

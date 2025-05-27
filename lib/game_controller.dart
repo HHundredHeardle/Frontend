@@ -98,6 +98,19 @@ class GameController {
     }
   }
 
+  /// Handles pass logic
+  void pass() {
+    if (!_resultCompleter.isCompleted) {
+      _guessCompleters[numGuesses()]
+          .complete(Guess("Passed", GuessResult.pass));
+      if (numGuesses() >= maxGuesses) {
+        _resultCompleter.complete(Result.lose);
+      }
+
+      guessMade.trigger();
+    }
+  }
+
   /// Returns if a result has been decided
   bool isComplete() {
     return _resultCompleter.isCompleted;
@@ -153,6 +166,7 @@ enum Result { win, lose }
 /// Represents guess results
 enum GuessResult {
   correct(icon: GuessResultIcon(Icons.check, Colors.green)),
+  pass(icon: GuessResultIcon(Icons.check_box_outline_blank, Colors.grey)),
   incorrect(icon: GuessResultIcon(Icons.close, Colors.red));
 
   const GuessResult({required this.icon});

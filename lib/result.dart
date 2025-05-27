@@ -31,6 +31,8 @@ class HHResults extends StatelessWidget {
 
 /// Displays number of guesses or failure message
 class _HHResult extends StatelessWidget {
+  static const double _height = 30.0;
+
   final Future<Result> _result = GameController().result;
 
   _HHResult();
@@ -38,6 +40,7 @@ class _HHResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: _height,
       child: FutureBuilder(
         future: _result,
         builder: (context, snapshot) {
@@ -59,6 +62,8 @@ class _HHResult extends StatelessWidget {
 
 /// Displays the song information
 class _HHAnswer extends StatelessWidget {
+  static const double _height = 30.0;
+
   final Future<String> _answer = GameController().answer;
   final Future<SongData?> _songData = Backend().songData.future;
 
@@ -67,6 +72,7 @@ class _HHAnswer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: _height,
       child: FutureBuilder(
         future: _answer,
         builder: (context, snapshot) =>
@@ -160,10 +166,9 @@ class _HHCountdownData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: _colours[_songData.year]!.background,
-      ),
+    return Container(
+      height: double.infinity,
+      color: _colours[_songData.year]!.background,
       child: Row(
         children: [
           Padding(
@@ -192,6 +197,8 @@ class _HHCountdownData extends StatelessWidget {
 
 /// Displays streak information
 class _HHStreak extends StatelessWidget {
+  static const double _height = 30.0;
+
   final int _currentStreak = 0; //TODO: get streak
   final int _maxStreak = 0; //TODO: get streak
   final Future<Result> _result = GameController().result;
@@ -201,6 +208,7 @@ class _HHStreak extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: _height,
       child: FutureBuilder(
         future: _result,
         builder: (context, snapshot) =>
@@ -243,6 +251,7 @@ class _HHResultsDivider extends StatefulWidget {
 class _HHResultsDividerState extends State<_HHResultsDivider> {
   static const Color _activeColor = Colors.white;
   static const Color _inactiveColor = Color.fromARGB(0, 0, 0, 0);
+  static const double _height = 1.0;
 
   Color _color = _inactiveColor;
 
@@ -260,6 +269,7 @@ class _HHResultsDividerState extends State<_HHResultsDivider> {
   Widget build(BuildContext context) {
     return Divider(
       color: _color,
+      height: _height,
     );
   }
 }
