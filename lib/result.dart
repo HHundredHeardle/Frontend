@@ -6,7 +6,6 @@
 /// Authors: Joshua Linehan
 library;
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'backend.dart';
@@ -24,7 +23,7 @@ class HHResults extends StatelessWidget {
         _HHResultsDivider(),
         _HHAnswer(),
         _HHResultsDivider(),
-        const _HHStreak()
+        _HHStreak(),
       ],
     );
   }
@@ -70,38 +69,35 @@ class _HHAnswer extends StatelessWidget {
     return SizedBox(
       child: FutureBuilder(
         future: _answer,
-        builder: (context, snapshot) {
-          return (snapshot.connectionState == ConnectionState.done)
-              ?
-              // Answer widget
-              Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Text(
-                            snapshot.data!,
-                            textAlign: TextAlign.center,
+        builder: (context, snapshot) =>
+            (snapshot.connectionState == ConnectionState.done)
+                ?
+                // Answer widget
+                Row(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              snapshot.data!,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    FutureBuilder(
-                      future: _songData,
-                      builder: (context, snapshot) {
-                        return (snapshot.connectionState ==
-                                ConnectionState.done)
-                            ?
-                            // Year and place
-                            _HHCountdownData(snapshot.data!)
-                            : const CircularProgressIndicator();
-                      },
-                    ),
-                  ],
-                )
-              : Container();
-        },
+                      FutureBuilder(
+                        future: _songData,
+                        builder: (context, snapshot) =>
+                            (snapshot.connectionState == ConnectionState.done)
+                                ?
+                                // Year and place
+                                _HHCountdownData(snapshot.data!)
+                                : const CircularProgressIndicator(),
+                      ),
+                    ],
+                  )
+                : Container(),
       ),
     );
   }
@@ -196,11 +192,38 @@ class _HHCountdownData extends StatelessWidget {
 
 /// Displays streak information
 class _HHStreak extends StatelessWidget {
-  const _HHStreak();
+  final int _currentStreak = 0; //TODO: get streak
+  final int _maxStreak = 0; //TODO: get streak
+  final Future<Result> _result = GameController().result;
+
+  _HHStreak();
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox();
+    return SizedBox(
+      child: FutureBuilder(
+        future: _result,
+        builder: (context, snapshot) =>
+            (snapshot.connectionState == ConnectionState.done)
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Current streak: $_currentStreak",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Longest streak: $_maxStreak",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
+      ),
+    );
   }
 }
 
