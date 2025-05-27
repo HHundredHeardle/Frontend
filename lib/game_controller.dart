@@ -30,6 +30,9 @@ class GameController {
   late final GameEvent gameOver;
   late final Future<Result> result;
 
+  Future<String> get answer =>
+      Future(() async => await result).then((_) => _answer);
+
   // private constructor
   GameController._() {
     result = _resultCompleter.future;
