@@ -114,7 +114,7 @@ class _HHAudioControllerState extends State<_HHAudioController> {
 
 /// audio player
 class _HHAudioPlayer extends AudioPlayer {
-  final GameEvent playerEvent = GameEvent();
+  final GameEvent pauseEvent = GameEvent();
 
   // private constructor
   _HHAudioPlayer._() {
@@ -122,7 +122,7 @@ class _HHAudioPlayer extends AudioPlayer {
     processingStateStream.listen((processingState) {
       if (processingState == ProcessingState.completed) {
         pause();
-        playerEvent.trigger();
+        pauseEvent.trigger();
         seek(Duration.zero);
       }
     });
@@ -130,7 +130,7 @@ class _HHAudioPlayer extends AudioPlayer {
     GameController().guessMade.subscribe(
       () {
         pause();
-        playerEvent.trigger();
+        pauseEvent.trigger();
         seek(Duration.zero);
       },
     );
@@ -138,7 +138,7 @@ class _HHAudioPlayer extends AudioPlayer {
     GameController().gameOver.subscribe(() async {
       pause();
       await setAudioSource((await Backend().clip6.future)!);
-      playerEvent.trigger();
+      pauseEvent.trigger();
       seek(Duration.zero);
       play();
     });
@@ -165,7 +165,7 @@ class _HHPlayButtonState extends State<_HHPlayButton> {
   @override
   void initState() {
     // update on pause/play
-    _HHAudioPlayer().playerEvent.subscribe(() {
+    _HHAudioPlayer().pauseEvent.subscribe(() {
       if (mounted) {
         setState(() {});
       }
