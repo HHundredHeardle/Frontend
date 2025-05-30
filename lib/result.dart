@@ -6,7 +6,11 @@
 /// Authors: Joshua Linehan
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:instant/instant.dart';
 
 import 'backend.dart';
 import 'game_controller.dart';
@@ -31,8 +35,9 @@ class HHResults extends StatelessWidget {
 
 /// Displays number of guesses or failure message
 class _HHResult extends StatelessWidget {
-  static const double _height = 30.0;
+  static const double _height = 40.0;
 
+  final DateTime _date = dateTimeToZone(zone: "AEST", datetime: DateTime.now());
   final Future<Result> _result = GameController().result;
 
   _HHResult();
@@ -46,12 +51,38 @@ class _HHResult extends StatelessWidget {
         builder: (context, snapshot) {
           int guesses = GameController().numGuesses();
           return (snapshot.connectionState == ConnectionState.done)
-              ? Text(
-                  switch (snapshot.data!) {
-                    Result.win =>
-                      "You got today's answer in $guesses guess${(guesses != 1) ? "es" : ""}",
-                    Result.lose => "You didn't get today's answer",
-                  },
+              ? Row(
+                  children: [
+                    const SizedBox(width: _height),
+                    Expanded(
+                      child: Text(
+                        switch (snapshot.data!) {
+                          Result.win =>
+                            "You got today's answer in $guesses guess${(guesses != 1) ? "es" : ""}",
+                          Result.lose => "You didn't get today's answer",
+                        },
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        await Clipboard.setData(
+                          ClipboardData(
+                            text:
+                                "Hottest Hundred Heardle ${_date.day}/${_date.month}/${_date.year}:\n${await GameController().getSharingString()}",
+                          ),
+                        ).whenComplete(() {
+                          if (context.mounted) {
+                            _HHToast.show(
+                              context,
+                              const Text("Copied to clipboard"),
+                            );
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.share),
+                    ),
+                  ],
                 )
               : Container();
         },
@@ -270,6 +301,125 @@ class _HHResultsDividerState extends State<_HHResultsDivider> {
     return Divider(
       color: _color,
       height: _height,
+    );
+  }
+}
+
+/// Displays a toast notification
+class _HHToast extends StatefulWidget {
+  static bool _showing = false;
+
+  final Widget? content;
+  final Duration duration;
+  final VoidCallback onComplete;
+
+  const _HHToast._internal({
+    required this.content,
+    Duration? duration,
+    required this.onComplete,
+  }) : duration = duration ?? const Duration(seconds: 2);
+
+  static void show(
+    BuildContext context,
+    Widget? content, [
+    Duration? duration,
+  ]) {
+    if (!_showing) {
+      _showing = true;
+      final overlay = Overlay.of(context);
+      late OverlayEntry overlayEntry;
+
+      overlayEntry = OverlayEntry(
+        builder: (context) => _HHToast._internal(
+          content: content,
+          duration: duration,
+          onComplete: () {
+            overlayEntry.remove();
+            _showing = false;
+          },
+        ),
+      );
+
+      overlay.insert(overlayEntry);
+    }
+  }
+
+  @override
+  State<_HHToast> createState() => _HHToastState();
+}
+
+class _HHToastState extends State<_HHToast>
+    with SingleTickerProviderStateMixin {
+  static const double _verticalPosition = 100.0;
+  static const double _horizontalPosition = 20.0;
+  static const Duration _animationDuration = Duration(milliseconds: 200);
+  static const EdgeInsets _padding =
+      EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+  static const double _borderRadius = 25;
+  static const double _shadowBlurRadius = 8;
+  static const Color _shadowColour = Colors.black26;
+  static final Color _backgroundColour = Colors.grey[850]!.withAlpha(222);
+
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: _animationDuration,
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
+
+    _controller.forward();
+
+    // Auto dismiss
+    Timer(widget.duration, () async {
+      await _controller.reverse();
+      widget.onComplete.call();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: _verticalPosition,
+      left: _horizontalPosition,
+      right: _horizontalPosition,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: _padding,
+              decoration: BoxDecoration(
+                color: _backgroundColour,
+                borderRadius: BorderRadius.circular(_borderRadius),
+                boxShadow: const [
+                  BoxShadow(
+                    color: _shadowColour,
+                    blurRadius: _shadowBlurRadius,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: widget.content,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

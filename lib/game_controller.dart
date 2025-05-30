@@ -111,6 +111,23 @@ class GameController {
     }
   }
 
+  /// Retrieves a string for result sharing
+  Future<String> getSharingString() async {
+    String result = "";
+    for (int i = 0; i < maxGuesses; i++) {
+      if (_guessCompleters[i].isCompleted) {
+        result += switch ((await _guesses[i]).result) {
+          GuessResult.correct => "🟩",
+          GuessResult.pass => "⬜️",
+          GuessResult.incorrect => "🟥",
+        };
+      } else {
+        result += "⬛️";
+      }
+    }
+    return result;
+  }
+
   /// Returns if a result has been decided
   bool isComplete() {
     return _resultCompleter.isCompleted;

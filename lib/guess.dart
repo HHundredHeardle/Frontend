@@ -49,7 +49,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   static const double _textBoxHeight = 68.0;
   static const EdgeInsets _answerEntryPadding = EdgeInsets.all(10.0);
   static const double _loadingIndicatorStrokeWidth = 1.0;
-  static const double _textHighlightOpacity = 0.4;
+  static const double _textHighlightAlpha = 102.0;
   static const double _optionsMaxWidth = 500.0;
   static const double _optionsMaxHeight = 690.0;
   static const int _hoverColorBlendAlpha = 22;
@@ -140,17 +140,27 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
         children: [
           // pass button
           TextButton(
-            onPressed: () => GameController().pass(),
+            onPressed: _textFieldEnabled ? () => GameController().pass() : null,
             child: Text(
               "PASS",
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: TextStyle(
+                color: _textFieldEnabled
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context)
+                        .iconButtonTheme
+                        .style
+                        ?.iconColor
+                        ?.resolve({WidgetState.disabled}),
+              ),
             ),
           ),
 
           // Search button
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () => FocusScope.of(context).requestFocus(_focusNode),
+            onPressed: _textFieldEnabled
+                ? () => FocusScope.of(context).requestFocus(_focusNode)
+                : null,
           ),
 
           Expanded(
@@ -197,7 +207,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                       selectionColor: Theme.of(context)
                           .colorScheme
                           .onPrimary
-                          .withOpacity(_textHighlightOpacity),
+                          .withValues(alpha: _textHighlightAlpha),
                     ),
                     child: TextField(
                       controller: textEditingController,
