@@ -20,26 +20,23 @@ class GameController {
     Backend backend = Backend();
     return "${(await backend.songData.future)!.title} - ${(await backend.songData.future)!.artist}";
   })();
-  final Completer<Result> _resultCompleter = Completer<Result>();
+  final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();
   final GameEvent duplicateGuess = GameEvent();
-  final List<Completer<Guess>> _guessCompleters = [
+  final List<Completer<Guess>> _guesses = [
     for (int i = 0; i < maxGuesses; i++) Completer<Guess>(),
   ];
-  late final List<Future<Guess>> _guesses;
   late final GameEvent gameOver;
-  late final Future<Result> result;
 
   Future<String> get answer =>
-      Future(() async => await result).then((_) => _answer);
+      Future(() async => await _result.future).then((_) => _answer);
+
+  Future<Result> get result => _result.future;
 
   // private constructor
   GameController._() {
-    result = _resultCompleter.future;
-    _guesses = [
-      for (Completer<Guess> completer in _guessCompleters) completer.future,
-    ];
-    gameOver = GameEvent.withTrigger(result);
+    _result.future;
+    gameOver = GameEvent.withTrigger(_result.future);
   }
 
   // Singleton instance
@@ -53,7 +50,7 @@ class GameController {
   /// returns the number of guesses that have been made
   int numGuesses() {
     int count = 0;
-    for (Completer completer in _guessCompleters) {
+    for (Completer completer in _guesses) {
       if (completer.isCompleted) {
         count++;
       } else {
@@ -65,15 +62,15 @@ class GameController {
 
   /// returns the nth guess (starting from 1)
   Future<Guess> getGuess(int guessNumber) {
-    return _guesses[guessNumber - 1];
+    return _guesses[guessNumber - 1].future;
   }
 
   /// handles guess logic
   void guess(String guess) async {
-    if (!_resultCompleter.isCompleted) {
+    if (!_result.isCompleted) {
       String answer = await _answer;
       // check for duplicate guesses
-      for (Completer<Guess> completer in _guessCompleters) {
+      for (Completer<Guess> completer in _guesses) {
         if (completer.isCompleted) {
           if ((await completer.future).guess == guess) {
             duplicateGuess.trigger();
@@ -84,14 +81,12 @@ class GameController {
         }
       }
       if (guess == answer) {
-        _guessCompleters[numGuesses()]
-            .complete(Guess(guess, GuessResult.correct));
-        _resultCompleter.complete(Result.win);
+        _guesses[numGuesses()].complete(Guess(guess, GuessResult.correct));
+        _result.complete(Result.win);
       } else {
-        _guessCompleters[numGuesses()]
-            .complete(Guess(guess, GuessResult.incorrect));
+        _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
         if (numGuesses() >= maxGuesses) {
-          _resultCompleter.complete(Result.lose);
+          _result.complete(Result.lose);
         }
       }
       guessMade.trigger();
@@ -100,11 +95,10 @@ class GameController {
 
   /// Handles pass logic
   void pass() {
-    if (!_resultCompleter.isCompleted) {
-      _guessCompleters[numGuesses()]
-          .complete(Guess("Passed", GuessResult.pass));
+    if (!_result.isCompleted) {
+      _guesses[numGuesses()].complete(Guess("Passed", GuessResult.pass));
       if (numGuesses() >= maxGuesses) {
-        _resultCompleter.complete(Result.lose);
+        _result.complete(Result.lose);
       }
 
       guessMade.trigger();
@@ -115,8 +109,8 @@ class GameController {
   Future<String> getSharingString() async {
     String result = "";
     for (int i = 0; i < maxGuesses; i++) {
-      if (_guessCompleters[i].isCompleted) {
-        result += switch ((await _guesses[i]).result) {
+      if (_guesses[i].isCompleted) {
+        result += switch ((await _guesses[i].future).result) {
           GuessResult.correct => "🟩",
           GuessResult.pass => "⬜️",
           GuessResult.incorrect => "🟥",
@@ -130,7 +124,7 @@ class GameController {
 
   /// Returns if a result has been decided
   bool isComplete() {
-    return _resultCompleter.isCompleted;
+    return _result.isCompleted;
   }
 }
 
