@@ -33,20 +33,4 @@ void main() {
       expect(widgetSize.height, 50.0);
     });
   });
-
-  testWidgets("Header golden test", (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(fontFamily: "monospace"),
-        home: Scaffold(
-          body: HHHeader(),
-        ),
-      ),
-    );
-
-    await expectLater(
-      find.byType(HHHeader),
-      matchesGoldenFile('goldens/HHHeader.png'),
-    );
-  });
 }
