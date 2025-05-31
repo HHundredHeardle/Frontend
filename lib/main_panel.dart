@@ -28,26 +28,30 @@ class HHMainPanel extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(_borderMargin),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(_borderPadding),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: HHGuesses(),
+        child: Column(
+          children: [
+            Expanded(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
-                HHTrackPlayer(),
-                HHAnswerEntry(),
-                HHResults(),
-              ],
+                child: const Padding(
+                  padding: EdgeInsets.all(_borderPadding),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: HHGuesses()),
+                      HHTrackPlayer(),
+                      HHAnswerEntry(),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+            HHResults(),
+          ],
         ),
       ),
     );
