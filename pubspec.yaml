@@ -53,7 +53,6 @@ dev_dependencies:
   mockito: ^5.4.4
   build_runner: ^2.4.13
   import_sorter: ^4.6.0
-  golden_toolkit: ^0.15.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
