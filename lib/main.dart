@@ -8,12 +8,10 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'account.dart';
 import 'backend.dart';
 import 'footer.dart';
 import 'header.dart';
 import 'main_panel.dart';
-import 'menu.dart';
 
 void main() {
   // initialise backend
@@ -67,19 +65,7 @@ class MainPage extends StatelessWidget {
 
           // main content
           Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: HHAccountPanel(),
-                ),
-                Expanded(
-                  child: HHMainPanel(),
-                ),
-                Expanded(
-                  child: HHMenuPanel(),
-                ),
-              ],
-            ),
+            child: HHMainPanel(),
           ),
 
           // footer

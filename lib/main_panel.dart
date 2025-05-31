@@ -16,31 +16,37 @@ import 'result.dart';
 class HHMainPanel extends StatelessWidget {
   static const double _borderMargin = 10.0;
   static const double _borderPadding = 20.0;
+  static const double _maxWidth = 560.0;
 
   const HHMainPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(_borderMargin),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).colorScheme.secondary,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: _maxWidth,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(_borderMargin),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
-        ),
-        child: const Padding(
-          padding: EdgeInsets.all(_borderPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: HHGuesses(),
-              ),
-              HHTrackPlayer(),
-              HHAnswerEntry(),
-              HHResults(),
-            ],
+          child: const Padding(
+            padding: EdgeInsets.all(_borderPadding),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: HHGuesses(),
+                ),
+                HHTrackPlayer(),
+                HHAnswerEntry(),
+                HHResults(),
+              ],
+            ),
           ),
         ),
       ),
