@@ -319,7 +319,8 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
 /// Panel showing result of a specific guess
 class _HHGuessBox extends StatelessWidget {
-  static const EdgeInsets _guessBoxPadding = EdgeInsets.all(16.0);
+  static const EdgeInsets _guessBoxPadding =
+      EdgeInsets.symmetric(horizontal: 16.0);
 
   final Future<Guess> guess;
 
