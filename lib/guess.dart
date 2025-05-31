@@ -87,7 +87,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
         setState(() {
           _errorText = "Answer cannot be blank";
         });
-      } else if (!(await Backend().answers.future)
+      } else if (!(await Backend().answers)
           .contains(_autocompleteController!.text)) {
         setState(() {
           _errorText = "Select an answer from the dropdown list";
@@ -105,11 +105,11 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
   /// Disables text field while answers are loading
   void _awaitAnswers() async {
-    if (!Backend().answers.isCompleted) {
+    if (!Backend().answersComplete) {
       setState(() {
         _textFieldEnabled = false;
       });
-      await Backend().answers.future;
+      await Backend().answers;
       setState(() {
         _textFieldEnabled = true;
       });
@@ -126,7 +126,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
   /// reloads widget when answers load
   void _reloadOnAnswerLoad() async {
-    await Backend().answers.future;
+    await Backend().answers;
     setState(() {});
     // trigger a rebuild of options
     _autocompleteController!.text = _autocompleteController!.text;
@@ -171,9 +171,9 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                 optionsBuilder: (textEditingValue) async =>
                     switch (textEditingValue.text.isEmpty) {
                   true => const Iterable.empty(),
-                  false => switch (Backend().answers.isCompleted) {
+                  false => switch (Backend().answersComplete) {
                       false => const ["Loading..."],
-                      true => (await Backend().answers.future).where(
+                      true => (await Backend().answers).where(
                           (element) {
                             String enteredText =
                                 textEditingValue.text.toLowerCase();
@@ -245,7 +245,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                           itemCount: options.length,
                           itemBuilder: (BuildContext context, int index) {
                             final String option = options.elementAt(index);
-                            return Backend().answers.isCompleted
+                            return Backend().answersComplete
                                 ? InkWell(
                                     hoverColor: Color.alphaBlend(
                                       Colors.white

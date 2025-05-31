@@ -74,17 +74,8 @@ class _HHAudioControllerState extends State<_HHAudioController> {
         ),
         child: FutureBuilder(
           future: (GameController().isComplete()
-                  ? Backend().clip6.future
-                  : switch (GameController().numGuesses()) {
-                      0 => Backend().clip1.future,
-                      1 => Backend().clip2.future,
-                      2 => Backend().clip3.future,
-                      3 => Backend().clip4.future,
-                      4 => Backend().clip5.future,
-                      >= 5 => Backend().clip6.future,
-                      int() =>
-                        throw UnsupportedError("Invalid number of guesses"),
-                    })
+                  ? Backend().getClip(6)
+                  : Backend().getClip(GameController().numGuesses() + 1))
               .then((audioSource) async {
             await _HHAudioPlayer().setAudioSource(audioSource);
             return audioSource;
@@ -137,7 +128,7 @@ class _HHAudioPlayer extends AudioPlayer {
     // play full track on game over
     GameController().gameOver.subscribe(() async {
       pause();
-      await setAudioSource((await Backend().clip6.future));
+      await setAudioSource((await Backend().getClip(6)));
       pauseEvent.trigger();
       seek(Duration.zero);
       play();
