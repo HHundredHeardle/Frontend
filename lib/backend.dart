@@ -2,7 +2,7 @@
 /// backend.dart
 ///
 /// Handles api calls. Ensures other files only have to handle dart data types
-/// and dom't have to make api calls.
+/// and don't have to make api calls.
 ///
 /// Authors: Joshua Linehan
 library;
@@ -22,11 +22,13 @@ import 'song_data.dart';
 /// Handles api calls. Singleton to allow it to load data from backend
 /// asynchronously
 class Backend {
-  static const String _backendURL = String.fromEnvironment("BACKEND_URL");
+  static const String _backendURL =
+      String.fromEnvironment("BACKEND_URL"); // TODO: assert not empty
 
   final Completer<SongData?> songData = Completer<SongData?>();
   final Completer<List<String>?> answers = Completer<List<String>?>();
-  final Completer<StreamAudioSource?> clip1 = Completer<StreamAudioSource?>();
+  final Completer<StreamAudioSource?> clip1 = Completer<
+      StreamAudioSource?>(); // TODO: add to list, privatise and write getter
   final Completer<StreamAudioSource?> clip2 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip3 = Completer<StreamAudioSource?>();
   final Completer<StreamAudioSource?> clip4 = Completer<StreamAudioSource?>();
