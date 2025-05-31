@@ -46,7 +46,8 @@ void main() {
 
   testWidgets("Footer golden test", (WidgetTester tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
+        theme: ThemeData(fontFamily: "monospace"),
         home: Scaffold(
           body: HHFooter(),
         ),

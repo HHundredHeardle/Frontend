@@ -36,7 +36,8 @@ void main() {
 
   testWidgets("Header golden test", (WidgetTester tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
+        theme: ThemeData(fontFamily: "monospace"),
         home: Scaffold(
           body: HHHeader(),
         ),
