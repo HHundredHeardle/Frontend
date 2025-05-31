@@ -37,6 +37,7 @@ class Backend {
 
   // private constructor
   Backend._() {
+    assert(_backendURL.isNotEmpty);
     _init();
   }
 
