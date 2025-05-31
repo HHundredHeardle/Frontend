@@ -96,7 +96,7 @@ class _HHAnswer extends StatelessWidget {
   static const double _height = 30.0;
 
   final Future<String> _answer = GameController().answer;
-  final Future<SongData?> _songData = Backend().songData.future;
+  final Future<SongData?> _songData = Backend().songData;
 
   _HHAnswer();
 
