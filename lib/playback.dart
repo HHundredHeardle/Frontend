@@ -86,7 +86,7 @@ class _HHAudioControllerState extends State<_HHAudioController> {
                         throw UnsupportedError("Invalid number of guesses"),
                     })
               .then((audioSource) async {
-            await _HHAudioPlayer().setAudioSource(audioSource!);
+            await _HHAudioPlayer().setAudioSource(audioSource);
             return audioSource;
           }),
           builder: (context, snapshot) {
@@ -137,7 +137,7 @@ class _HHAudioPlayer extends AudioPlayer {
     // play full track on game over
     GameController().gameOver.subscribe(() async {
       pause();
-      await setAudioSource((await Backend().clip6.future)!);
+      await setAudioSource((await Backend().clip6.future));
       pauseEvent.trigger();
       seek(Duration.zero);
       play();

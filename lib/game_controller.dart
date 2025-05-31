@@ -18,7 +18,7 @@ class GameController {
 
   final Future<String> _answer = (() async {
     Backend backend = Backend();
-    return "${(await backend.songData.future)!.title} - ${(await backend.songData.future)!.artist}";
+    return "${(await backend.songData.future).title} - ${(await backend.songData.future).artist}";
   })();
   final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();

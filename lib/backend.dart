@@ -25,15 +25,15 @@ class Backend {
   static const String _backendURL =
       String.fromEnvironment("BACKEND_URL"); // TODO: assert not empty
 
-  final Completer<SongData?> songData = Completer<SongData?>();
-  final Completer<List<String>?> answers = Completer<List<String>?>();
-  final Completer<StreamAudioSource?> clip1 = Completer<
-      StreamAudioSource?>(); // TODO: add to list, privatise and write getter
-  final Completer<StreamAudioSource?> clip2 = Completer<StreamAudioSource?>();
-  final Completer<StreamAudioSource?> clip3 = Completer<StreamAudioSource?>();
-  final Completer<StreamAudioSource?> clip4 = Completer<StreamAudioSource?>();
-  final Completer<StreamAudioSource?> clip5 = Completer<StreamAudioSource?>();
-  final Completer<StreamAudioSource?> clip6 = Completer<StreamAudioSource?>();
+  final Completer<SongData> songData = Completer<SongData>();
+  final Completer<List<String>> answers = Completer<List<String>>();
+  final Completer<StreamAudioSource> clip1 = Completer<
+      StreamAudioSource>(); // TODO: add to list, privatise and write getter
+  final Completer<StreamAudioSource> clip2 = Completer<StreamAudioSource>();
+  final Completer<StreamAudioSource> clip3 = Completer<StreamAudioSource>();
+  final Completer<StreamAudioSource> clip4 = Completer<StreamAudioSource>();
+  final Completer<StreamAudioSource> clip5 = Completer<StreamAudioSource>();
+  final Completer<StreamAudioSource> clip6 = Completer<StreamAudioSource>();
 
   // private constructor
   Backend._() {
@@ -81,7 +81,7 @@ class Backend {
   }
 
   /// retrieves a clip from backend
-  static Future<StreamAudioSource?> _getClip(int clipNum) async {
+  static Future<StreamAudioSource> _getClip(int clipNum) async {
     // get data from backend
     try {
       final response = await http
@@ -94,18 +94,18 @@ class Backend {
         debugPrint(
           "${(Backend).toString()}._getClip: response.toString: ${response.toString()}",
         );
-        return null;
+        return Future.error("Failed to load data.");
       }
     } catch (e) {
       debugPrint(
         "${(Backend).toString()}._getClip: e.toString: ${e.toString()}",
       );
-      return null;
+      return Future.error("Failed to load data.");
     }
   }
 
   /// retrieves today's answer from backend
-  static Future<SongData?> _getSongData() async {
+  static Future<SongData> _getSongData() async {
     // get data from backend
     try {
       final response =
@@ -122,18 +122,18 @@ class Backend {
         debugPrint(
           "${(Backend).toString()}._getSongData: response.toString: ${response.toString()}",
         );
-        return null;
+        return Future.error("Failed to load data.");
       }
     } catch (e) {
       debugPrint(
         "${(Backend).toString()}._getSongData: e.toString: ${e.toString()}",
       );
-      return null;
+      return Future.error("Failed to load data.");
     }
   }
 
   /// retrieves answers list
-  static Future<List<String>?> _getAnswers() async {
+  static Future<List<String>> _getAnswers() async {
     // get data from backend
     try {
       final response = await http.get(Uri.https(_backendURL, "/api/answers"));
@@ -143,13 +143,13 @@ class Backend {
         debugPrint(
           "${(Backend).toString()}._getAnswers: response.toString: ${response.toString()}",
         );
-        return null;
+        return Future.error("Failed to load data.");
       }
     } catch (e) {
       debugPrint(
         "${(Backend).toString()}._getAnswers: e.toString: ${e.toString()}",
       );
-      return null;
+      return Future.error("Failed to load data.");
     }
   }
 }

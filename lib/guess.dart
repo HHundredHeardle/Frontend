@@ -87,7 +87,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
         setState(() {
           _errorText = "Answer cannot be blank";
         });
-      } else if (!(await Backend().answers.future)!
+      } else if (!(await Backend().answers.future)
           .contains(_autocompleteController!.text)) {
         setState(() {
           _errorText = "Select an answer from the dropdown list";
@@ -173,7 +173,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                   true => const Iterable.empty(),
                   false => switch (Backend().answers.isCompleted) {
                       false => const ["Loading..."],
-                      true => (await Backend().answers.future)!.where(
+                      true => (await Backend().answers.future).where(
                           (element) {
                             String enteredText =
                                 textEditingValue.text.toLowerCase();
