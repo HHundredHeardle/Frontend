@@ -1,0 +1,2 @@
+# Enforce Windows newlines
+* text=auto eol=crlf

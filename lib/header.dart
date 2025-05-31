@@ -26,12 +26,12 @@ class HHHeader extends StatelessWidget {
             ),
           ),
         ),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const _HHAccountAvatar(_headerHeight),
+            _HHAccountAvatar(_headerHeight),
             _HHTitle(),
-            const _HHDrawerButton(_headerHeight),
+            _HHDrawerButton(_headerHeight),
           ],
         ),
       ),
@@ -42,6 +42,8 @@ class HHHeader extends StatelessWidget {
 /// The title displayed in the header
 class _HHTitle extends StatelessWidget {
   static const String _title = "Hottest Hundred Heardle";
+
+  const _HHTitle();
 
   @override
   Widget build(BuildContext context) {

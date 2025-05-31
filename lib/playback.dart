@@ -7,21 +7,59 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import 'package:just_audio/just_audio.dart';
 
 import 'backend.dart';
+import 'game_controller.dart';
 
-/// Button to play track
-class HHPlayButton extends StatefulWidget {
-  const HHPlayButton({super.key});
+/// Holds the play button and information
+class HHTrackPlayer extends StatelessWidget {
+  static const EdgeInsets _playerPadding = EdgeInsets.all(10.0);
+
+  const HHTrackPlayer({super.key});
 
   @override
-  State<HHPlayButton> createState() => _HHPlayButtonState();
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+      ),
+      child: const Padding(
+        padding: _playerPadding,
+        child: Row(
+          children: [
+            _HHAudioController(),
+            // playback bar
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _HHPlayButtonState extends State<HHPlayButton> {
+/// Button to play track
+class _HHAudioController extends StatefulWidget {
+  const _HHAudioController();
+
+  @override
+  State<_HHAudioController> createState() => _HHAudioControllerState();
+}
+
+class _HHAudioControllerState extends State<_HHAudioController> {
   static const double _iconRadius = 24.0;
   static const double _size = 40.0;
+
+  @override
+  void initState() {
+    // rebuild widget when a guess is made
+    GameController().guessMade.subscribe(() {
+      setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +73,30 @@ class _HHPlayButtonState extends State<HHPlayButton> {
           borderRadius: BorderRadius.circular(_iconRadius),
         ),
         child: FutureBuilder(
-          future: Backend.getClip(1),
+          future: (GameController().isComplete()
+                  ? Backend().clip6.future
+                  : switch (GameController().numGuesses()) {
+                      0 => Backend().clip1.future,
+                      1 => Backend().clip2.future,
+                      2 => Backend().clip3.future,
+                      3 => Backend().clip4.future,
+                      4 => Backend().clip5.future,
+                      >= 5 => Backend().clip6.future,
+                      int() =>
+                        throw UnsupportedError("Invalid number of guesses"),
+                    })
+              .then((audioSource) async {
+            await _HHAudioPlayer().setAudioSource(audioSource!);
+            return audioSource;
+          }),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
-                return _HHAudioPlayer(snapshot.data!);
+                return const _HHPlayButton();
               } else {
-                debugPrint(snapshot.toString());
+                debugPrint(
+                  "${(_HHAudioControllerState).toString()}.build: snapshot.toString(): ${snapshot.toString()}",
+                );
                 return const Tooltip(
                   message: "Error loading audio",
                   child: Icon(Icons.error),
@@ -57,38 +112,65 @@ class _HHPlayButtonState extends State<HHPlayButton> {
   }
 }
 
-/// Handles audio play and pausing
-class _HHAudioPlayer extends StatefulWidget {
-  final StreamAudioSource audio;
+/// audio player
+class _HHAudioPlayer extends AudioPlayer {
+  final GameEvent pauseEvent = GameEvent();
 
-  const _HHAudioPlayer(this.audio);
-  @override
-  State<_HHAudioPlayer> createState() => _HHAudioPlayerState();
+  // private constructor
+  _HHAudioPlayer._() {
+    // pause and reset player once track finishes
+    processingStateStream.listen((processingState) {
+      if (processingState == ProcessingState.completed) {
+        pause();
+        pauseEvent.trigger();
+        seek(Duration.zero);
+      }
+    });
+    // pause player when a guess is made
+    GameController().guessMade.subscribe(
+      () {
+        pause();
+        pauseEvent.trigger();
+        seek(Duration.zero);
+      },
+    );
+    // play full track on game over
+    GameController().gameOver.subscribe(() async {
+      pause();
+      await setAudioSource((await Backend().clip6.future)!);
+      pauseEvent.trigger();
+      seek(Duration.zero);
+      play();
+    });
+  }
+
+  // Singleton instance
+  static final _HHAudioPlayer _instance = _HHAudioPlayer._();
+
+  /// access point to singleton instance
+  factory _HHAudioPlayer() {
+    return _instance;
+  }
 }
 
-class _HHAudioPlayerState extends State<_HHAudioPlayer> {
-  late final AudioPlayer _player;
+/// The play/pause button that responds to audio state
+class _HHPlayButton extends StatefulWidget {
+  const _HHPlayButton();
 
   @override
+  State<_HHPlayButton> createState() => _HHPlayButtonState();
+}
+
+class _HHPlayButtonState extends State<_HHPlayButton> {
+  @override
   void initState() {
-    _player = AudioPlayer();
-    _player.setAudioSource(widget.audio);
-    // pause and reset player once track finishes
-    _player.processingStateStream.listen((processingState) {
-      if (processingState == ProcessingState.completed) {
-        setState(() {
-          _player.pause();
-          _player.seek(Duration.zero);
-        });
+    // update on pause/play
+    _HHAudioPlayer().pauseEvent.subscribe(() {
+      if (mounted) {
+        setState(() {});
       }
     });
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _player.dispose();
-    super.dispose();
   }
 
   @override
@@ -97,16 +179,16 @@ class _HHAudioPlayerState extends State<_HHAudioPlayer> {
       onPressed: () {
         // play/pause player
         setState(() {
-          if (_player.playerState.playing) {
-            _player.pause();
+          if (_HHAudioPlayer().playerState.playing) {
+            _HHAudioPlayer().pause();
           } else {
-            _player.play();
+            _HHAudioPlayer().play();
           }
         });
       },
       // toggle icon based on player state
       icon: Icon(
-        _player.playerState.playing ? Icons.pause : Icons.play_arrow,
+        _HHAudioPlayer().playerState.playing ? Icons.pause : Icons.play_arrow,
       ),
     );
   }

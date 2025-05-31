@@ -8,23 +8,28 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'header.dart';
 import 'account.dart';
+import 'backend.dart';
 import 'footer.dart';
+import 'header.dart';
 import 'main_panel.dart';
 import 'menu.dart';
 
 void main() {
+  // initialise backend
+  Backend();
   runApp(const HHundredHeardle());
 }
 
 class HHundredHeardle extends StatelessWidget {
+  static const String _title = 'Hottest Hundred Heardle';
+
   const HHundredHeardle({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: _title,
       theme: ThemeData(
         colorScheme: ColorScheme(
           brightness: Brightness.dark,
@@ -42,21 +47,16 @@ class HHundredHeardle extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainPage(title: 'Hottest Hundred Heardle'),
+      home: const MainPage(title: _title),
     );
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.title});
-
+class MainPage extends StatelessWidget {
   final String title;
 
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
+  const MainPage({super.key, required this.title});
 
-class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

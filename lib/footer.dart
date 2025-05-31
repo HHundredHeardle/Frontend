@@ -7,6 +7,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 import 'version.dart';
@@ -32,7 +33,7 @@ class HHFooter extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _ContactInfo(),
+            const _ContactInfo(),
             _CommitHash(),
           ],
         ),
@@ -84,6 +85,8 @@ class _ContactInfo extends StatelessWidget {
   static const String _email = "hhundredheardle@gmail.com";
   static const String _text = "Contact: ";
   static const EdgeInsets _padding = EdgeInsets.only(left: 15.0);
+
+  const _ContactInfo();
 
   @override
   Widget build(BuildContext context) {
