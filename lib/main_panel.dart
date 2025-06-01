@@ -38,7 +38,12 @@ class HHMainPanel extends StatelessWidget {
                   ),
                 ),
                 child: const Padding(
-                  padding: EdgeInsets.all(_borderPadding),
+                  padding: EdgeInsets.fromLTRB(
+                    _borderPadding,
+                    _borderPadding,
+                    _borderPadding,
+                    0.0,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
