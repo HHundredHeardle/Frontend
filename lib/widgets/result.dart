@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import '../utils/backend.dart';
 import '../utils/date.dart';
 import '../utils/game_controller.dart';
+import '../utils/local_storage.dart';
 import '../utils/song_data.dart';
 
 /// Displays the result of the game
@@ -229,9 +230,8 @@ class _HHCountdownData extends StatelessWidget {
 class _HHStreak extends StatelessWidget {
   static const double _height = 30.0;
 
-  final int _currentStreak = 0; //TODO: get streak
-  final int _maxStreak = 0; //TODO: get streak
-  final Future<Result> _result = GameController().result;
+  final Future<int> _currentStreak = LocalStorage().streak;
+  final Future<int> _maxStreak = LocalStorage().longestStreak;
 
   _HHStreak();
 
@@ -240,20 +240,20 @@ class _HHStreak extends StatelessWidget {
     return SizedBox(
       height: _height,
       child: FutureBuilder(
-        future: _result,
+        future: Future.wait([_currentStreak, _maxStreak]),
         builder: (context, snapshot) =>
             (snapshot.connectionState == ConnectionState.done)
                 ? Row(
                     children: [
                       Expanded(
                         child: Text(
-                          "Current streak: $_currentStreak",
+                          "Current streak: ${snapshot.data!.first}",
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Expanded(
                         child: Text(
-                          "Longest streak: $_maxStreak",
+                          "Longest streak: ${snapshot.data!.last}",
                           textAlign: TextAlign.center,
                         ),
                       ),
