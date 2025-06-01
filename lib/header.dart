@@ -26,14 +26,7 @@ class HHHeader extends StatelessWidget {
             ),
           ),
         ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _HHAccountAvatar(_headerHeight),
-            _HHTitle(),
-            _HHDrawerButton(_headerHeight),
-          ],
-        ),
+        child: _HHTitle(),
       ),
     );
   }
@@ -52,79 +45,6 @@ class _HHTitle extends StatelessWidget {
         _title,
         style: Theme.of(context).textTheme.titleLarge,
       ),
-    );
-  }
-}
-
-/// Button/Icon for account
-class _HHAccountAvatar extends StatelessWidget {
-  final double _headerHeight;
-
-  const _HHAccountAvatar(double headerHeight) : _headerHeight = headerHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return _HeaderChildCentrer(
-      headerHeight: _headerHeight,
-      child: IconButton(
-        onPressed: () {},
-        icon: _HHHeaderIcon(
-          icon: Icons.account_circle,
-          headerHeight: _headerHeight,
-        ),
-      ),
-    );
-  }
-}
-
-/// Drawer Button
-class _HHDrawerButton extends StatelessWidget {
-  final double _headerHeight;
-
-  const _HHDrawerButton(double headerHeight) : _headerHeight = headerHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return _HeaderChildCentrer(
-      headerHeight: _headerHeight,
-      child: IconButton(
-        onPressed: () {},
-        icon: _HHHeaderIcon(
-          icon: Icons.menu,
-          headerHeight: _headerHeight,
-        ),
-      ),
-    );
-  }
-}
-
-/// Layout widget to set icon sizes
-class _HHHeaderIcon extends Icon {
-  /// proportion of header height size of icon will be
-  static const double _sizeRatio = 0.5;
-
-  const _HHHeaderIcon({required IconData icon, required double headerHeight})
-      : super(
-          icon,
-          size: (headerHeight * _sizeRatio),
-        );
-}
-
-/// SizedBox that ensures children are centred in the space they occupy in the
-/// header
-class _HeaderChildCentrer extends StatelessWidget {
-  /// Height of the header this widget is placed inside of
-  final double _headerHeight;
-  final Widget child;
-
-  const _HeaderChildCentrer({required double headerHeight, required this.child})
-      : _headerHeight = headerHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: _headerHeight,
-      child: child,
     );
   }
 }
