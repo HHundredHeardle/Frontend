@@ -9,6 +9,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'utils/backend.dart';
+import 'utils/game_controller.dart';
 import 'widgets/footer.dart';
 import 'widgets/header.dart';
 import 'widgets/main_panel.dart';
@@ -16,6 +17,8 @@ import 'widgets/main_panel.dart';
 void main() {
   // initialise backend
   Backend();
+  // initialise game controller
+  GameController().loadGuesses();
   runApp(const HHundredHeardle());
 }
 

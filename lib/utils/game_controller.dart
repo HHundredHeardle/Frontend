@@ -11,6 +11,7 @@ import "dart:async";
 import "package:flutter/material.dart";
 
 import 'backend.dart';
+import "local_storage.dart";
 
 /// Controls game logic and events
 class GameController {
@@ -20,6 +21,7 @@ class GameController {
     Backend backend = Backend();
     return "${(await backend.songData).title} - ${(await backend.songData).artist}";
   })();
+  final Completer<void> _guessesLoaded = Completer<void>();
   final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();
   final GameEvent duplicateGuess = GameEvent();
@@ -33,9 +35,10 @@ class GameController {
 
   Future<Result> get result => _result.future;
 
+  Future<void> get guessesLoaded => _guessesLoaded.future;
+
   // private constructor
   GameController._() {
-    _result.future;
     gameOver = GameEvent.withTrigger(_result.future);
   }
 
@@ -45,6 +48,19 @@ class GameController {
   /// access point to singleton instance
   factory GameController() {
     return _instance;
+  }
+
+  /// loads guesses from local storage
+  Future<void> loadGuesses() async {
+    List<Guess> loadedGuesses = await LocalStorage().guesses;
+    for (Guess loadedGuess in loadedGuesses) {
+      if (loadedGuess.result == GuessResult.pass) {
+        pass();
+      } else {
+        await guess(loadedGuess.guess);
+      }
+    }
+    _guessesLoaded.complete();
   }
 
   /// returns the number of guesses that have been made
@@ -66,7 +82,7 @@ class GameController {
   }
 
   /// handles guess logic
-  void guess(String guess) async {
+  Future<void> guess(String guess) async {
     if (!_result.isCompleted) {
       String answer = await _answer;
       // check for duplicate guesses
@@ -160,9 +176,29 @@ class GameEvent {
 
 /// represents a guess
 class Guess {
+  static const String _delimiter = "|";
+
   final String guess;
   final GuessResult result;
   Guess(this.guess, this.result);
+
+  /// creates a guess from an encoded string
+  factory Guess.fromString(String guessString) {
+    List<String> tokens = guessString.split(_delimiter);
+    String guess = tokens[0];
+    GuessResult result = switch (tokens[1]) {
+      "correct" => GuessResult.correct,
+      "incorrect" => GuessResult.incorrect,
+      "pass" => GuessResult.pass,
+      String() => throw UnsupportedError("result ${tokens[1]} not supported"),
+    };
+    return Guess(guess, result);
+  }
+
+  @override
+  String toString() {
+    return "$guess$_delimiter${result.name}";
+  }
 }
 
 /// Icon displayed in guess result

@@ -142,7 +142,9 @@ class Backend {
 
   /// access point for clips
   Future<StreamAudioSource> getClip(int clipNumber) {
-    return _clips[clipNumber - 1].future;
+    return clipNumber < GameController.maxGuesses
+        ? _clips[clipNumber - 1].future
+        : _clips[5].future;
   }
 }
 
