@@ -8,6 +8,7 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,62 +27,13 @@ class LocalStorage {
   final Completer<int> _streak = Completer<int>();
   final Completer<int> _longestStreak = Completer<int>();
 
-  Future<int> get streak {
-    return GameController().result.then(
-          (value) async => switch (value) {
-            Result.win => (await _streak.future) + 1,
-            Result.lose => 0,
-          },
-        );
-  }
-
-  Future<int> get longestStreak async {
-    int longest = await _longestStreak.future;
-    int current = await streak;
-    return current > longest ? current : longest;
-  }
+  Future<List<Guess>> get guesses => _guesses.future;
+  Future<int> get streak => _streak.future;
+  Future<int> get longestStreak => _longestStreak.future;
 
   static final LocalStorage _instance = LocalStorage._internal();
 
   LocalStorage._internal() {
-    // load longest streak
-    _getLongestStreak().then(
-      (value) {
-        _longestStreak.complete(value ?? 0);
-      },
-    ).onError(
-      (error, stackTrace) {
-        _longestStreak.complete(0);
-      },
-    );
-
-    // load streak
-    _getStreak()
-        .then((value) {
-          if (value == null) {
-            return 0;
-          }
-          DateTime date = HHDate().date;
-          int count = 0;
-          int i = value.length - 1;
-          while (i >= 0) {
-            if (value[i] == HHDate.formatted(date)) {
-              count++;
-            } else {
-              break;
-            }
-            date = date.subtract(Duration(days: 1));
-            i--;
-          }
-          return count;
-        })
-        .then((value) => _streak.complete(value))
-        .onError(
-          (error, stackTrace) {
-            _streak.complete(0);
-          },
-        );
-
     // load guesses
     _getGuesses().then((value) {
       List<Guess> guesses = [];
@@ -118,7 +70,7 @@ class LocalStorage {
     });
 
     // update streaks when done
-    _saveStreaks();
+    GameController().result.then((value) => _saveStreaks(value));
   }
 
   factory LocalStorage() => _instance;
@@ -154,18 +106,45 @@ class LocalStorage {
   }
 
   /// save new streaks
-  void _saveStreaks() async {
-    // set new streak
-    int newStreak = await streak;
-    if (newStreak == 0) {
-      _setStreak([]);
-    } else {
-      List<String> streakList = (await _getStreak()) ?? [];
-      streakList.add(HHDate.formatted(HHDate().date));
-      _setStreak(streakList);
+  void _saveStreaks(Result result) async {
+    int streak;
+    int longest = (await _getLongestStreak()) ?? 0;
+
+    switch (result) {
+      case Result.lose:
+        _setStreak([]);
+        streak = 0;
+        break;
+      case Result.win:
+        List<String> streakList = (await _getStreak()) ?? [];
+        streakList.add(HHDate.formatted(HHDate().date));
+        streak = _countStreak(streakList);
+        streakList = streakList.sublist(streakList.length - streak);
+        _setStreak(streakList);
+        break;
     }
 
-    // set new longest
-    _setLongestStreak(await longestStreak);
+    longest = max(longest, streak);
+    _setLongestStreak(longest);
+
+    _streak.complete(streak);
+    _longestStreak.complete(longest);
+  }
+
+  /// counts a streak from a list of date string
+  int _countStreak(List<String> streak) {
+    DateTime date = HHDate().date;
+    int count = 0;
+    int i = streak.length - 1;
+    while (i >= 0) {
+      if (streak[i] == HHDate.formatted(date)) {
+        count++;
+      } else {
+        break;
+      }
+      date = date.subtract(Duration(days: 1));
+      i--;
+    }
+    return count;
   }
 }
