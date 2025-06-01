@@ -10,9 +10,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:instant/instant.dart';
 
 import '../utils/backend.dart';
+import '../utils/date.dart';
 import '../utils/game_controller.dart';
 import '../utils/song_data.dart';
 
@@ -37,7 +37,6 @@ class HHResults extends StatelessWidget {
 class _HHResult extends StatelessWidget {
   static const double _height = 40.0;
 
-  final DateTime _date = dateTimeToZone(zone: "AEST", datetime: DateTime.now());
   final Future<Result> _result = GameController().result;
 
   _HHResult();
@@ -69,7 +68,7 @@ class _HHResult extends StatelessWidget {
                         await Clipboard.setData(
                           ClipboardData(
                             text:
-                                "Hottest Hundred Heardle ${_date.day}/${_date.month}/${_date.year}:\n${await GameController().getSharingString()}\nhttps://hhundredheardle.free.nf/",
+                                "Hottest Hundred Heardle ${HHDate().resultString()}:\n${await GameController().getSharingString()}\nhttps://hhundredheardle.free.nf/",
                           ),
                         ).whenComplete(() {
                           if (context.mounted) {

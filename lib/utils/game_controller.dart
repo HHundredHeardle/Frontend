@@ -163,6 +163,11 @@ class Guess {
   final String guess;
   final GuessResult result;
   Guess(this.guess, this.result);
+
+  /// creates a guess from an encoded string
+  factory Guess.fromString(String guess) {
+    throw UnimplementedError();
+  }
 }
 
 /// Icon displayed in guess result

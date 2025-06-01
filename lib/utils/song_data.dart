@@ -1,5 +1,5 @@
 /// Hottest Hundred Heardle
-/// song-data.dart
+/// song_data.dart
 ///
 /// class for storing song information
 ///
