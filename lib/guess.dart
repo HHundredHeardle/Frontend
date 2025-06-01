@@ -90,7 +90,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
       } else if (!(await Backend().answers)
           .contains(_autocompleteController!.text)) {
         setState(() {
-          _errorText = "Select an answer from the dropdown list";
+          _errorText = "Select an answer from the list";
         });
       } else {
         GameController().guess(_autocompleteController!.text);
@@ -141,6 +141,11 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
           // pass button
           TextButton(
             onPressed: _textFieldEnabled ? () => GameController().pass() : null,
+            style: ButtonStyle(
+              padding: WidgetStateProperty.all(EdgeInsets.zero),
+              minimumSize: WidgetStateProperty.all(Size.zero),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             child: Text(
               "PASS",
               style: TextStyle(
