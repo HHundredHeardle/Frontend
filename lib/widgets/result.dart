@@ -350,8 +350,8 @@ class _HHToast extends StatefulWidget {
 
 class _HHToastState extends State<_HHToast>
     with SingleTickerProviderStateMixin {
-  static const double _verticalPosition = 100.0;
-  static const double _horizontalPosition = 20.0;
+  static const double _verticalPosition = 50.0;
+  static const double _horizontalPosition = 0.0;
   static const Duration _animationDuration = Duration(milliseconds: 200);
   static const EdgeInsets _padding =
       EdgeInsets.symmetric(horizontal: 16, vertical: 12);
