@@ -13,8 +13,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import "package:flutter/scheduler.dart";
 
-import 'backend.dart';
-import 'game_controller.dart';
+import '../utils/backend.dart';
+import '../utils/game_controller.dart';
 
 /// Widget group containing guess boxes
 class HHGuesses extends StatelessWidget {

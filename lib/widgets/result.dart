@@ -12,9 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:instant/instant.dart';
 
-import 'backend.dart';
-import 'game_controller.dart';
-import 'song_data.dart';
+import '../utils/backend.dart';
+import '../utils/game_controller.dart';
+import '../utils/song_data.dart';
 
 /// Displays the result of the game
 class HHResults extends StatelessWidget {

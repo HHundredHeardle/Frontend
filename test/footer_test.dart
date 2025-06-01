@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:hottest_hundred_heardle/footer.dart';
+import 'package:hottest_hundred_heardle/widgets/footer.dart';
 
 void main() {
   group("Footer widget tests", () {

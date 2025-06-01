@@ -8,10 +8,10 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'backend.dart';
-import 'footer.dart';
-import 'header.dart';
-import 'main_panel.dart';
+import 'utils/backend.dart';
+import 'widgets/footer.dart';
+import 'widgets/header.dart';
+import 'widgets/main_panel.dart';
 
 void main() {
   // initialise backend

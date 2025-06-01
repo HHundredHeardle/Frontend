@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 
 import 'package:just_audio/just_audio.dart';
 
-import 'backend.dart';
-import 'game_controller.dart';
+import '../utils/backend.dart';
+import '../utils/game_controller.dart';
 
 /// Holds the play button and information
 class HHTrackPlayer extends StatelessWidget {
