@@ -15,7 +15,9 @@ import '../utils/game_controller.dart';
 
 /// Holds the play button and information
 class HHTrackPlayer extends StatelessWidget {
-  static const EdgeInsets _playerPadding = EdgeInsets.all(10.0);
+  static const double _paddingSize = 10.0;
+  static const EdgeInsets _playerPadding = EdgeInsets.all(_paddingSize);
+  static const double _height = 40.0;
 
   const HHTrackPlayer({super.key});
 
@@ -27,13 +29,24 @@ class HHTrackPlayer extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
-      child: const Padding(
+      child: Padding(
         padding: _playerPadding,
-        child: Row(
-          children: [
-            _HHAudioController(),
-            // playback bar
-          ],
+        child: SizedBox(
+          height: _height,
+          child: Row(
+            children: [
+              SizedBox.square(
+                dimension: _height,
+                child: const _HHAudioController(),
+              ),
+              const SizedBox(
+                width: _paddingSize,
+              ),
+              Expanded(
+                child: _HHPlayerBar(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -50,7 +63,6 @@ class _HHAudioController extends StatefulWidget {
 
 class _HHAudioControllerState extends State<_HHAudioController> {
   static const double _iconRadius = 24.0;
-  static const double _size = 40.0;
 
   @override
   void initState() {
@@ -63,41 +75,38 @@ class _HHAudioControllerState extends State<_HHAudioController> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: _size,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-          borderRadius: BorderRadius.circular(_iconRadius),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
-        child: FutureBuilder(
-          future: (GameController().isComplete()
-                  ? Backend().getClip(6)
-                  : Backend().getClip(GameController().numGuesses() + 1))
-              .then((audioSource) async {
-            await _HHAudioPlayer().setAudioSource(audioSource);
-            return audioSource;
-          }),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                return const _HHPlayButton();
-              } else {
-                debugPrint(
-                  "${(_HHAudioControllerState).toString()}.build: snapshot.toString(): ${snapshot.toString()}",
-                );
-                return const Tooltip(
-                  message: "Error loading audio",
-                  child: Icon(Icons.error),
-                );
-              }
+        borderRadius: BorderRadius.circular(_iconRadius),
+      ),
+      child: FutureBuilder(
+        future: (GameController().isComplete()
+                ? Backend().getClip(6)
+                : Backend().getClip(GameController().numGuesses() + 1))
+            .then((audioSource) async {
+          await _HHAudioPlayer().setAudioSource(audioSource);
+          return audioSource;
+        }),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return const _HHPlayButton();
             } else {
-              return const CircularProgressIndicator();
+              debugPrint(
+                "${(_HHAudioControllerState).toString()}.build: snapshot.toString(): ${snapshot.toString()}",
+              );
+              return const Tooltip(
+                message: "Error loading audio",
+                child: Icon(Icons.error),
+              );
             }
-          },
-        ),
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }
@@ -180,6 +189,83 @@ class _HHPlayButtonState extends State<_HHPlayButton> {
       // toggle icon based on player state
       icon: Icon(
         _HHAudioPlayer().playerState.playing ? Icons.pause : Icons.play_arrow,
+      ),
+    );
+  }
+}
+
+class _HHPlayerBar extends StatefulWidget {
+  @override
+  State<_HHPlayerBar> createState() => _HHPlayerBarState();
+}
+
+class _HHPlayerBarState extends State<_HHPlayerBar> {
+  static const int _totalSeconds = 30;
+  static const double _fullHeight = 1.0;
+  static const double _playerHeightFactor = 0.2;
+  static const List<int> _clipFlexes = [7, 6, 22, 38, 38, 119];
+  static const int _dividerFlex = 2;
+
+  final Stream<Duration> _stream = _HHAudioPlayer().positionStream;
+
+  static Color _playedColor(BuildContext context) =>
+      Theme.of(context).colorScheme.secondary;
+
+  static Color _unplayedColor(BuildContext context) =>
+      Theme.of(context).disabledColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionallySizedBox(
+      alignment: Alignment.center,
+      heightFactor: _playerHeightFactor,
+      child: Stack(
+        children: [
+          StreamBuilder(
+            stream: _stream,
+            builder: (context, snapshot) {
+              double progress =
+                  ((snapshot.data ?? Duration.zero).inMilliseconds /
+                          Duration(seconds: _totalSeconds).inMilliseconds)
+                      .clamp(0.0, 1.0);
+              return Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: _unplayedColor(context),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  heightFactor: _fullHeight,
+                  widthFactor: progress,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _playedColor(context),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Row(
+            children: [
+              for (int i = 0; i < (_clipFlexes.length * 2) - 1; i++)
+                if (i % 2 == 0)
+                  Expanded(
+                    flex: _clipFlexes[i ~/ 2],
+                    child: Container(),
+                  )
+                else
+                  Expanded(
+                    flex: _dividerFlex,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+            ],
+          ),
+        ],
       ),
     );
   }
