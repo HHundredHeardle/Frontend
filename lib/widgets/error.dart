@@ -14,13 +14,20 @@ import '../utils/backend.dart';
 
 /// Handles error messages
 class Error {
+  static BuildContext? _context;
+
+  static set context(BuildContext context) => _context = context;
+
   /// Checks for backend spindown
-  static void spindown(BuildContext context) {
+  static void spindown() {
+    if (_context == null) {
+      return;
+    }
     const Duration waitTime = Duration(seconds: 3);
     Timer(waitTime, () {
       if (!Backend().answersComplete) {
         showDialog(
-          context: context,
+          context: _context!,
           barrierDismissible: false,
           builder: (context) {
             const double width = 400;
@@ -80,5 +87,27 @@ class Error {
         );
       }
     });
+  }
+
+  static void error(Object? error) {
+    if (_context == null) {
+      return;
+    }
+    showDialog(
+      context: _context!,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            "Error",
+            style: TextStyle(color: ColorScheme.of(context).error),
+          ),
+          content: Text(
+            error?.toString() ?? "An error occurred",
+            style: TextStyle(color: ColorScheme.of(context).error),
+          ),
+        );
+      },
+    );
   }
 }

@@ -67,8 +67,9 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    Error.context = context;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Error.spindown(context);
+      Error.spindown();
     });
   }
 
