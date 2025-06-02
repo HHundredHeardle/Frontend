@@ -212,7 +212,7 @@ class _HHPlayerBarState extends State<_HHPlayerBar> {
       Theme.of(context).colorScheme.secondary;
 
   static Color _unplayedColor(BuildContext context) =>
-      Theme.of(context).colorScheme.primaryContainer;
+      Theme.of(context).disabledColor;
 
   @override
   Widget build(BuildContext context) {
