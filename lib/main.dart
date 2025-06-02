@@ -13,6 +13,7 @@ import 'utils/game_controller.dart';
 import 'widgets/footer.dart';
 import 'widgets/header.dart';
 import 'widgets/main_panel.dart';
+import 'widgets/error.dart';
 
 void main() {
   // initialise backend
@@ -53,10 +54,24 @@ class HHundredHeardle extends StatelessWidget {
   }
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   final String title;
 
   const MainPage({super.key, required this.title});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    Error.context = context;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Error.spindown();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

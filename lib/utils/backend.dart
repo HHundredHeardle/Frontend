@@ -19,6 +19,7 @@ import 'package:just_audio/just_audio.dart';
 
 import 'game_controller.dart';
 import 'song_data.dart';
+import "../widgets/error.dart";
 
 /// Handles api calls. Singleton to allow it to load data from backend
 /// asynchronously
@@ -32,8 +33,14 @@ class Backend {
       Completer<StreamAudioSource>(),
   ];
 
-  Future<SongData> get songData => _songData.future;
-  Future<List<String>> get answers => _answers.future;
+  Future<SongData> get songData => _songData.future.catchError((error) {
+        Error.error(error);
+        return error;
+      });
+  Future<List<String>> get answers => _answers.future.catchError((error) {
+        Error.error(error);
+        return error;
+      });
   bool get answersComplete => _answers.isCompleted;
 
   // private constructor
@@ -63,7 +70,12 @@ class Backend {
     ]);
     // wait for each clip to load before requesting the next
     for (int i = 0; i < GameController.maxGuesses; i++) {
-      await _getClip(i + 1).then((value) => _clips[i].complete(value));
+      await _getClip(i + 1)
+          .then((value) => _clips[i].complete(value))
+          .catchError((error) {
+        Error.error(error);
+        return error;
+      });
     }
   }
 
