@@ -200,9 +200,11 @@ class _HHPlayerBar extends StatefulWidget {
 }
 
 class _HHPlayerBarState extends State<_HHPlayerBar> {
-  static const Duration _totalDuration = Duration(seconds: 30);
+  static const int _totalSeconds = 30;
   static const double _fullHeight = 1.0;
   static const double _playerHeightFactor = 0.2;
+  static const List<int> _clipFlexes = [7, 6, 22, 38, 38, 119];
+  static const int _dividerFlex = 2;
 
   final Stream<Duration> _stream = _HHAudioPlayer().positionStream;
 
@@ -217,28 +219,53 @@ class _HHPlayerBarState extends State<_HHPlayerBar> {
     return FractionallySizedBox(
       alignment: Alignment.center,
       heightFactor: _playerHeightFactor,
-      child: StreamBuilder(
-        stream: _stream,
-        builder: (context, snapshot) {
-          double progress = ((snapshot.data ?? Duration.zero).inMilliseconds /
-                  _totalDuration.inMilliseconds)
-              .clamp(0.0, 1.0);
-          return Container(
-            decoration: BoxDecoration(
-              color: _unplayedColor(context),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              heightFactor: _fullHeight,
-              widthFactor: progress,
-              child: Container(
+      child: Stack(
+        children: [
+          StreamBuilder(
+            stream: _stream,
+            builder: (context, snapshot) {
+              double progress =
+                  ((snapshot.data ?? Duration.zero).inMilliseconds /
+                          Duration(seconds: _totalSeconds).inMilliseconds)
+                      .clamp(0.0, 1.0);
+              return Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  color: _playedColor(context),
+                  color: _unplayedColor(context),
                 ),
-              ),
-            ),
-          );
-        },
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  heightFactor: _fullHeight,
+                  widthFactor: progress,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _playedColor(context),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Row(
+            children: [
+              for (int i = 0; i < (_clipFlexes.length * 2) - 1; i++)
+                if (i % 2 == 0)
+                  Expanded(
+                    flex: _clipFlexes[i ~/ 2],
+                    child: Container(),
+                  )
+                else
+                  Expanded(
+                    flex: _dividerFlex,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+            ],
+          ),
+        ],
       ),
     );
   }
