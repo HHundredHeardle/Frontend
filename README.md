@@ -5,18 +5,21 @@
 This is the frontend for Hottest Hundred Heardle, a web app inspired by the now-defunct music guessing game Heardle, and featuring songs that have featured in Triple J's Hottest 100. Hottest Hundred Heardle is intended to run in a browser, and support both mobile and desktop use.
 
 ## Table of Contents
-- [1 - Repository Organisation](#1---repository-organisation)
-  - [1.1 - Repository Structure](#11---repository-structure)
-    - [1.1.1 - Main](#111---main)
-    - [1.1.2 - Dev](#112---dev)
-    - [1.1.3 - Feature branches](#113---feature-branches)
-  - [1.2 - Project Management](#12---project-management)
-- [2 - Architecture](#2---architecture)
-  - [2.1 - Flutter](#21---flutter)
-  - [2.2 - InfinityFree](#22---infinityfree)
-- [3 - CI/CD](#3---cicd)
-  - [3.1 - Testing](#31---testing)
-  - [3.2 - Deployment](#32---deployment)
+- [Hottest Hundred Heardle Frontend](#hottest-hundred-heardle-frontend)
+  - [Introduction](#introduction)
+  - [Table of Contents](#table-of-contents)
+  - [1 - Repository Organisation](#1---repository-organisation)
+    - [1.1 - Repository Structure](#11---repository-structure)
+      - [1.1.1 - Main](#111---main)
+      - [1.1.2 - Dev](#112---dev)
+      - [1.1.3 - Feature branches](#113---feature-branches)
+    - [1.2 - Project Management](#12---project-management)
+  - [2 - Architecture](#2---architecture)
+    - [2.1 - Flutter](#21---flutter)
+    - [2.2 - InfinityFree](#22---infinityfree)
+  - [3 - CI/CD](#3---cicd)
+    - [3.1 - Testing](#31---testing)
+    - [3.2 - Deployment](#32---deployment)
 
 ## 1 - Repository Organisation
 
@@ -28,7 +31,7 @@ The main branch contains the latest stable version of the project. Main should o
 
 #### 1.1.2 - Dev
 
-The dev branch contains the master developmental version of the project. Committing directly to dev should be avoided, instead feature branches should be made from dev.
+The dev branch contains the main developmental version of the project. Committing directly to dev should be avoided, instead feature branches should be made from dev.
 
 #### 1.1.3 - Feature branches
 
@@ -42,15 +45,15 @@ Project tasks will be managed using [the HHundredHeardle GitHub Projects Board](
 
 ### 2.1 - Flutter
 
-Flutter will be used to create the client-side application. This allows access to the benefits of using dart, including type safety and aspects of functional programming. Flutter also allows for the potential of creating mobile and desktop applications in the future.
+Flutter will be used to create the frontend application. This allows access to the benefits of using dart, including type safety and aspects of functional programming. Flutter also allows for the potential of creating mobile and desktop applications in the future.
 
 ### 2.2 - InfinityFree
 
-The project is hosted by InfinityFree. InfinityFree provide the domain and SSL certificate. The project is deployed to InfinityFree using FTP.
+The project is hosted by InfinityFree. InfinityFree provides the domain and SSL certificate. The project is deployed to InfinityFree using FTP.
 
 ## 3 - CI/CD
 
-This project uses Github Actions for CI/CD.
+This project uses GitHub Actions for CI/CD.
 
 ### 3.1 - Testing
 
