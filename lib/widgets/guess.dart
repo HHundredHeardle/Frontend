@@ -79,6 +79,8 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
   /// Handles text field logic for guesses
   void _submitGuess() async {
+    // notify game controller
+    GameController().userHasInteracted = true;
     // require controller
     if (_autocompleteController == null) {
       return;

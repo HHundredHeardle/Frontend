@@ -30,6 +30,8 @@ class GameController {
   ];
   late final GameEvent gameOver;
 
+  bool userHasInteracted = false;
+
   Future<String> get answer =>
       Future(() async => await _result.future).then((_) => _answer);
 
