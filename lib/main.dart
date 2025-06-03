@@ -7,6 +7,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'utils/backend.dart';
 import 'utils/game_controller.dart';
@@ -75,6 +76,12 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.dark.copyWith(
+        systemNavigationBarColor: ColorScheme.of(context).primary,
+        statusBarColor: ColorScheme.of(context).primary,
+      ),
+    );
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
