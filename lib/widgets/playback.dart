@@ -140,7 +140,9 @@ class _HHAudioPlayer extends AudioPlayer {
       await setAudioSource((await Backend().getClip(6)));
       pauseEvent.trigger();
       seek(Duration.zero);
-      play();
+      if (GameController().userHasInteracted) {
+        play();
+      }
     });
   }
 
