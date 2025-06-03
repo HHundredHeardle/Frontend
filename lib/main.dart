@@ -8,20 +8,30 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'header/header.dart';
-import 'footer.dart';
+import 'utils/backend.dart';
+import 'utils/game_controller.dart';
+import 'widgets/footer.dart';
+import 'widgets/header.dart';
+import 'widgets/main_panel.dart';
+import 'widgets/error.dart';
 
 void main() {
+  // initialise backend
+  Backend();
+  // initialise game controller
+  GameController().loadGuesses();
   runApp(const HHundredHeardle());
 }
 
 class HHundredHeardle extends StatelessWidget {
+  static const String _title = 'Hottest Hundred Heardle';
+
   const HHundredHeardle({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: _title,
       theme: ThemeData(
         colorScheme: ColorScheme(
           brightness: Brightness.dark,
@@ -39,21 +49,30 @@ class HHundredHeardle extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainPage(title: 'Hottest Hundred Heardle'),
+      home: const MainPage(title: _title),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.title});
-
   final String title;
+
+  const MainPage({super.key, required this.title});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+    Error.context = context;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Error.spindown();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,15 +83,7 @@ class _MainPageState extends State<MainPage> {
 
           // main content
           Expanded(
-            child: Center(
-              child: Text(
-                "Hottest Hundred Heardle is currently under construction",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: Colors.yellow.withOpacity(0.75)),
-              ),
-            ),
+            child: HHMainPanel(),
           ),
 
           // footer
