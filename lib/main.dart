@@ -75,11 +75,12 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           // title section
-          HHHeader(),
+          const HHHeader(),
 
           // main content
           Expanded(
@@ -87,7 +88,7 @@ class _MainPageState extends State<MainPage> {
           ),
 
           // footer
-          HHFooter(),
+          const HHFooter(),
         ],
       ),
     );

@@ -117,7 +117,10 @@ class LocalStorage {
         break;
       case Result.win:
         List<String> streakList = (await _getStreak()) ?? [];
-        streakList.add(HHDate.formatted(HHDate().date));
+        String today = HHDate.formatted(HHDate().date);
+        if (!streakList.contains(today)) {
+          streakList.add(HHDate.formatted(HHDate().date));
+        }
         streak = _countStreak(streakList);
         streakList = streakList.sublist(streakList.length - streak);
         _setStreak(streakList);
