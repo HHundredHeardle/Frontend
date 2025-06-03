@@ -38,12 +38,12 @@ class GameController {
   Future<void> get guessesLoaded => _guessesLoaded.future;
 
   // private constructor
-  GameController._() {
+  GameController._internal() {
     gameOver = GameEvent.withTrigger(_result.future);
   }
 
   // Singleton instance
-  static final GameController _instance = GameController._();
+  static final GameController _instance = GameController._internal();
 
   /// access point to singleton instance
   factory GameController() {

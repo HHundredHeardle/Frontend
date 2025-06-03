@@ -44,13 +44,13 @@ class Backend {
   bool get answersComplete => _answers.isCompleted;
 
   // private constructor
-  Backend._() {
+  Backend._internal() {
     assert(_backendURL.isNotEmpty);
     _init();
   }
 
   // Singleton instance
-  static final Backend _instance = Backend._();
+  static final Backend _instance = Backend._internal();
 
   /// access point to singleton instance
   factory Backend() {
