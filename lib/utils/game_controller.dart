@@ -21,6 +21,8 @@ class GameController {
     Backend backend = Backend();
     return "${(await backend.songData).title} - ${(await backend.songData).artist}";
   })();
+  final Future<String> _artist =
+      (() async => " - ${(await Backend().songData).artist}")();
   final Completer<void> _guessesLoaded = Completer<void>();
   final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();
@@ -50,6 +52,16 @@ class GameController {
   /// access point to singleton instance
   factory GameController() {
     return _instance;
+  }
+
+  /// Checks if a guess contains the correct artist
+  Future<bool> _artistMatch(String guess) async {
+    String artist = await _artist;
+    try {
+      return guess.substring(guess.length - artist.length) == artist;
+    } on RangeError {
+      return false;
+    }
   }
 
   /// loads guesses from local storage
@@ -98,10 +110,17 @@ class GameController {
           break;
         }
       }
+      // correct
       if (guess == answer) {
         _guesses[numGuesses()].complete(Guess(guess, GuessResult.correct));
         _result.complete(Result.win);
-      } else {
+      } else
+      // partial
+      if (await _artistMatch(guess)) {
+        _guesses[numGuesses()].complete(Guess(guess, GuessResult.partial));
+      }
+      // incorrect
+      else {
         _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
         if (numGuesses() >= maxGuesses) {
           _result.complete(Result.lose);
@@ -130,8 +149,9 @@ class GameController {
       if (_guesses[i].isCompleted) {
         result += switch ((await _guesses[i].future).result) {
           GuessResult.correct => "🟩",
-          GuessResult.pass => "⬜️",
+          GuessResult.partial => "🟨",
           GuessResult.incorrect => "🟥",
+          GuessResult.pass => "⬜️",
         };
       } else {
         result += "⬛️";
@@ -190,6 +210,7 @@ class Guess {
     String guess = tokens[0];
     GuessResult result = switch (tokens[1]) {
       "correct" => GuessResult.correct,
+      "partial" => GuessResult.partial,
       "incorrect" => GuessResult.incorrect,
       "pass" => GuessResult.pass,
       String() => throw UnsupportedError("result ${tokens[1]} not supported"),
@@ -216,7 +237,10 @@ enum Result { win, lose }
 enum GuessResult {
   correct(icon: GuessResultIcon(Icons.check, Colors.green)),
   pass(icon: GuessResultIcon(Icons.check_box_outline_blank, Colors.grey)),
-  incorrect(icon: GuessResultIcon(Icons.close, Colors.red));
+  incorrect(icon: GuessResultIcon(Icons.close, Colors.red)),
+  partial(
+      icon: GuessResultIcon(
+          Icons.indeterminate_check_box_outlined, Colors.yellow));
 
   const GuessResult({required this.icon});
 
