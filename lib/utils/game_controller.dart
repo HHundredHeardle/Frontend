@@ -191,6 +191,7 @@ class Guess {
     String guess = tokens[0];
     GuessResult result = switch (tokens[1]) {
       "correct" => GuessResult.correct,
+      "partial" => GuessResult.partial,
       "incorrect" => GuessResult.incorrect,
       "pass" => GuessResult.pass,
       String() => throw UnsupportedError("result ${tokens[1]} not supported"),
