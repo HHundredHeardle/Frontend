@@ -21,6 +21,8 @@ class GameController {
     Backend backend = Backend();
     return "${(await backend.songData).title} - ${(await backend.songData).artist}";
   })();
+  final Future<String> _artist =
+      (() async => " - ${(await Backend().songData).artist}")();
   final Completer<void> _guessesLoaded = Completer<void>();
   final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();
@@ -50,6 +52,16 @@ class GameController {
   /// access point to singleton instance
   factory GameController() {
     return _instance;
+  }
+
+  /// Checks if a guess contains the correct artist
+  Future<bool> _artistMatch(String guess) async {
+    String artist = await _artist;
+    try {
+      return guess.substring(guess.length - artist.length) == artist;
+    } on RangeError {
+      return false;
+    }
   }
 
   /// loads guesses from local storage
@@ -98,10 +110,17 @@ class GameController {
           break;
         }
       }
+      // correct
       if (guess == answer) {
         _guesses[numGuesses()].complete(Guess(guess, GuessResult.correct));
         _result.complete(Result.win);
-      } else {
+      } else
+      // partial
+      if (await _artistMatch(guess)) {
+        _guesses[numGuesses()].complete(Guess(guess, GuessResult.partial));
+      }
+      // incorrect
+      else {
         _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
         if (numGuesses() >= maxGuesses) {
           _result.complete(Result.lose);
