@@ -235,12 +235,30 @@ enum Result { win, lose }
 
 /// Represents guess results
 enum GuessResult {
-  correct(icon: GuessResultIcon(Icons.check, Colors.green)),
-  pass(icon: GuessResultIcon(Icons.check_box_outline_blank, Colors.grey)),
-  incorrect(icon: GuessResultIcon(Icons.close, Colors.red)),
+  correct(
+    icon: GuessResultIcon(
+      Icons.check,
+      Colors.green,
+    ),
+  ),
+  pass(
+    icon: GuessResultIcon(
+      Icons.check_box_outline_blank,
+      Colors.grey,
+    ),
+  ),
+  incorrect(
+    icon: GuessResultIcon(
+      Icons.close,
+      Colors.red,
+    ),
+  ),
   partial(
-      icon: GuessResultIcon(
-          Icons.indeterminate_check_box_outlined, Colors.yellow));
+    icon: GuessResultIcon(
+      Icons.indeterminate_check_box_outlined,
+      Colors.yellow,
+    ),
+  );
 
   const GuessResult({required this.icon});
 
