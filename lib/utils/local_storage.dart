@@ -35,13 +35,13 @@ class LocalStorage {
 
   LocalStorage._internal() {
     // load guesses
-    _getGuesses().then((value) {
+    Future.wait([_getGuesses(), HHDate().date]).then((value) {
       List<Guess> guesses = [];
-      if (value == null) {
+      if (value[0] == null) {
         return guesses;
       }
-      dynamic guessJson = jsonDecode(value);
-      for (String guessString in guessJson[HHDate.formatted(HHDate().date)]) {
+      dynamic guessJson = jsonDecode(value[0].toString());
+      for (String guessString in guessJson[value[1]]) {
         guesses.add(Guess.fromString(guessString));
       }
       return guesses;
@@ -65,7 +65,7 @@ class LocalStorage {
 
       // save json of guesses
       Map<String, List<String>> guessMap = {};
-      guessMap[HHDate.formatted(HHDate().date)] = guessStrings;
+      guessMap[HHDate.formatted(await HHDate().date)] = guessStrings;
       _setGuesses(jsonEncode(guessMap));
     });
 
@@ -117,11 +117,11 @@ class LocalStorage {
         break;
       case Result.win:
         List<String> streakList = (await _getStreak()) ?? [];
-        String today = HHDate.formatted(HHDate().date);
+        String today = HHDate.formatted(await HHDate().date);
         if (!streakList.contains(today)) {
-          streakList.add(HHDate.formatted(HHDate().date));
+          streakList.add(HHDate.formatted(await HHDate().date));
         }
-        streak = _countStreak(streakList);
+        streak = await _countStreak(streakList);
         streakList = streakList.sublist(streakList.length - streak);
         _setStreak(streakList);
         break;
@@ -135,8 +135,8 @@ class LocalStorage {
   }
 
   /// counts a streak from a list of date string
-  int _countStreak(List<String> streak) {
-    DateTime date = HHDate().date;
+  Future<int> _countStreak(List<String> streak) async {
+    DateTime date = await HHDate().date;
     int count = 0;
     int i = streak.length - 1;
     while (i >= 0) {
