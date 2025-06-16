@@ -14,7 +14,7 @@ import 'result.dart';
 
 /// Panel containing main game
 class HHMainPanel extends StatelessWidget {
-  static const double _borderMargin = 10.0;
+  static const double borderMargin = 10.0;
   static const double _borderPadding = 20.0;
   static const double _maxWidth = 560.0;
 
@@ -27,7 +27,7 @@ class HHMainPanel extends StatelessWidget {
         maxWidth: _maxWidth,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(_borderMargin),
+        padding: const EdgeInsets.all(borderMargin),
         child: Column(
           children: [
             Expanded(
