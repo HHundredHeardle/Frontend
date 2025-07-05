@@ -22,7 +22,7 @@ class GameController {
     return "${(await backend.songData).title} - ${(await backend.songData).artist}";
   })();
   final Future<String> _artist =
-      (() async => " - ${(await Backend().songData).artist}")();
+      (() async => (await Backend().songData).artist)();
   final Completer<void> _guessesLoaded = Completer<void>();
   final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();
@@ -57,11 +57,16 @@ class GameController {
   /// Checks if a guess contains the correct artist
   Future<bool> _artistMatch(String guess) async {
     String artist = await _artist;
-    try {
-      return guess.substring(guess.length - artist.length) == artist;
-    } on RangeError {
-      return false;
-    }
+
+    // remove featured artists
+    RegExp featuredArtistRegex = RegExp(r" featuring .+$");
+    artist = artist.replaceFirst(featuredArtistRegex, "");
+    guess = guess.replaceFirst(featuredArtistRegex, "");
+
+    // isolate artist from guess
+    RegExp artistRegex = RegExp(r".+ - ");
+    guess = guess.replaceFirst(artistRegex, "");
+    return guess == artist;
   }
 
   /// loads guesses from local storage
