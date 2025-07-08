@@ -27,7 +27,12 @@ class HHMainPanel extends StatelessWidget {
         maxWidth: _maxWidth,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(borderMargin),
+        padding: const EdgeInsets.fromLTRB(
+          borderMargin,
+          borderMargin,
+          borderMargin,
+          0.0,
+        ),
         child: Column(
           children: [
             Expanded(
