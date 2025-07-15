@@ -107,6 +107,19 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
     }
   }
 
+  /// Handles text field logic for passing
+  void _pass() async {
+    GameController().userHasInteracted = true;
+    if (!GameController().isComplete()) {
+      GameController().pass();
+      // clear guess when submitted
+      _autocompleteController!.text = "";
+      setState(() {
+        _errorText = null;
+      });
+    }
+  }
+
   /// Disables text field while answers are loading
   void _awaitAnswers() async {
     if (!Backend().answersComplete) {
@@ -148,9 +161,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
                   children: [
                     // pass button
                     TextButton(
-                      onPressed: _textFieldEnabled
-                          ? () => GameController().pass()
-                          : null,
+                      onPressed: _textFieldEnabled ? _pass : null,
                       style: ButtonStyle(
                         padding: WidgetStateProperty.all(EdgeInsets.zero),
                         minimumSize: WidgetStateProperty.all(Size.zero),
