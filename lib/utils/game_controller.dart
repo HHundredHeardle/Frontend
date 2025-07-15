@@ -119,14 +119,15 @@ class GameController {
       if (guess == answer) {
         _guesses[numGuesses()].complete(Guess(guess, GuessResult.correct));
         _result.complete(Result.win);
-      } else
-      // partial
-      if (await _artistMatch(guess)) {
-        _guesses[numGuesses()].complete(Guess(guess, GuessResult.partial));
-      }
-      // incorrect
-      else {
-        _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
+      } else {
+        // partial
+        if (await _artistMatch(guess)) {
+          _guesses[numGuesses()].complete(Guess(guess, GuessResult.partial));
+        }
+        // incorrect
+        else {
+          _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
+        }
         if (numGuesses() >= maxGuesses) {
           _result.complete(Result.lose);
         }
@@ -142,7 +143,6 @@ class GameController {
       if (numGuesses() >= maxGuesses) {
         _result.complete(Result.lose);
       }
-
       guessMade.trigger();
     }
   }
