@@ -149,7 +149,7 @@ class GameController {
 
   /// Retrieves a string for result sharing
   Future<String> getSharingString() async {
-    String result = "";
+    String result = (await this.result) == Result.win ? "✅" : "❌";
     for (int i = 0; i < maxGuesses; i++) {
       if (_guesses[i].isCompleted) {
         result += switch ((await _guesses[i].future).result) {
