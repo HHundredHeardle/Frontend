@@ -38,6 +38,7 @@ dependencies:
   just_audio: ^0.9.46
   shared_preferences: ^2.5.3
   timezone: ^0.10.1
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:
