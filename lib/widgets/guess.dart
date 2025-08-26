@@ -355,6 +355,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
 
 /// Panel showing result of a specific guess
 class _HHGuessBox extends StatelessWidget {
+  static const double _minHeight = 26.0;
   static const EdgeInsets _guessBoxPadding =
       EdgeInsets.symmetric(horizontal: 16.0);
 
@@ -365,35 +366,39 @@ class _HHGuessBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: FutureBuilder(
-        future: guess,
-        builder: (context, snapshot) => Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.onPrimary,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: _minHeight),
+        child: FutureBuilder(
+          future: guess,
+          builder: (context, snapshot) => Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
-          ),
-          child: Center(
-            child: Padding(
-              padding: _guessBoxPadding,
-              child: (snapshot.connectionState == ConnectionState.done)
-                  ? Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            snapshot.data!.guess,
-                            style: TextStyle(
-                              color: (snapshot.data!.result == GuessResult.pass)
-                                  ? Theme.of(context).disabledColor
-                                  : null,
+            child: Center(
+              child: Padding(
+                padding: _guessBoxPadding,
+                child: (snapshot.connectionState == ConnectionState.done)
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              snapshot.data!.guess,
+                              style: TextStyle(
+                                color:
+                                    (snapshot.data!.result == GuessResult.pass)
+                                        ? Theme.of(context).disabledColor
+                                        : null,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        snapshot.data!.result.icon
-                      ],
-                    )
-                  : null,
+                          snapshot.data!.result.icon
+                        ],
+                      )
+                    : null,
+              ),
             ),
           ),
         ),

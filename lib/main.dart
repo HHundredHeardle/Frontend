@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 
 import 'utils/backend.dart';
 import 'utils/game_controller.dart';
+import 'widgets/conditional_scroll_view.dart.dart';
 import 'widgets/footer.dart';
 import 'widgets/header.dart';
 import 'widgets/main_panel.dart';
@@ -64,6 +65,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  static const double _maxWidth = 560.0;
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +87,14 @@ class _MainPageState extends State<MainPage> {
 
           // main content
           Expanded(
-            child: HHMainPanel(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: _maxWidth,
+              ),
+              child: ConditionalScrollView(
+                child: HHMainPanel(),
+              ),
+            ),
           ),
 
           // footer
