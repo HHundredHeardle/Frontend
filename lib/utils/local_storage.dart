@@ -41,7 +41,7 @@ class LocalStorage {
         return guesses;
       }
       dynamic guessJson = jsonDecode(value.toString());
-      for (String guessString in guessJson[HHDate().date]) {
+      for (String guessString in guessJson[HHDate.formatted(HHDate().date)]) {
         guesses.add(Guess.fromString(guessString));
       }
       return guesses;
