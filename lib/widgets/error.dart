@@ -53,7 +53,7 @@ class Error {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Due to the restrictions of our web service, initial data can take over two minutes to load.",
+                        "Backend services are spinning up. This takes around 2 minutes from first site visit. Try refreshing the page after at least 2 minutes.",
                         style: TextTheme.of(context).titleMedium,
                         textAlign: TextAlign.center,
                       ),

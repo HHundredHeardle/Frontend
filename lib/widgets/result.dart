@@ -16,6 +16,7 @@ import '../utils/date.dart';
 import '../utils/game_controller.dart';
 import '../utils/local_storage.dart';
 import '../utils/song_data.dart';
+import 'main_panel.dart';
 
 /// Displays the result of the game
 class HHResults extends StatelessWidget {
@@ -106,35 +107,37 @@ class _HHAnswer extends StatelessWidget {
       height: _height,
       child: FutureBuilder(
         future: _answer,
-        builder: (context, snapshot) =>
-            (snapshot.connectionState == ConnectionState.done)
-                ?
-                // Answer widget
-                Row(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
-                              snapshot.data!,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+        builder: (context, snapshot) => (snapshot.connectionState ==
+                ConnectionState.done)
+            ?
+            // Answer widget
+            Row(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding:
+                            EdgeInsets.only(right: HHMainPanel.borderMargin),
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
+                          snapshot.data!,
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      FutureBuilder(
-                        future: _songData,
-                        builder: (context, snapshot) =>
-                            (snapshot.connectionState == ConnectionState.done)
-                                ?
-                                // Year and place
-                                _HHCountdownData(snapshot.data!)
-                                : const CircularProgressIndicator(),
-                      ),
-                    ],
-                  )
-                : Container(),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: _songData,
+                    builder: (context, snapshot) =>
+                        (snapshot.connectionState == ConnectionState.done)
+                            ?
+                            // Year and place
+                            _HHCountdownData(snapshot.data!)
+                            : const CircularProgressIndicator(),
+                  ),
+                ],
+              )
+            : Container(),
       ),
     );
   }

@@ -40,8 +40,8 @@ class LocalStorage {
       if (value == null) {
         return guesses;
       }
-      dynamic guessJson = jsonDecode(value);
-      for (String guessString in guessJson[HHDate.formatted(HHDate().date)]) {
+      dynamic guessJson = jsonDecode(value.toString());
+      for (String guessString in guessJson[HHDate().date]) {
         guesses.add(Guess.fromString(guessString));
       }
       return guesses;
@@ -76,7 +76,7 @@ class LocalStorage {
   factory LocalStorage() => _instance;
 
   /// gets stored streak
-  Future<List<String>?> _getStreak() async {
+  Future<List<String>?> _getStreak() {
     return _preferences.getStringList(_streakKey);
   }
 
@@ -86,7 +86,7 @@ class LocalStorage {
   }
 
   /// gets stored longest streak
-  Future<int?> _getLongestStreak() async {
+  Future<int?> _getLongestStreak() {
     return _preferences.getInt(_longestStreakKey);
   }
 
@@ -96,7 +96,7 @@ class LocalStorage {
   }
 
   /// gets stored guesses
-  Future<String?> _getGuesses() async {
+  Future<String?> _getGuesses() {
     return _preferences.getString(_guessesKey);
   }
 
