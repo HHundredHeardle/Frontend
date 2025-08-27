@@ -22,7 +22,7 @@ class GameController {
     return "${(await backend.songData).title} - ${(await backend.songData).artist}";
   })();
   final Future<String> _artist =
-      (() async => " - ${(await Backend().songData).artist}")();
+      (() async => (await Backend().songData).artist)();
   final Completer<void> _guessesLoaded = Completer<void>();
   final Completer<Result> _result = Completer<Result>();
   final GameEvent guessMade = GameEvent();
@@ -57,11 +57,16 @@ class GameController {
   /// Checks if a guess contains the correct artist
   Future<bool> _artistMatch(String guess) async {
     String artist = await _artist;
-    try {
-      return guess.substring(guess.length - artist.length) == artist;
-    } on RangeError {
-      return false;
-    }
+
+    // remove featured artists
+    RegExp featuredArtistRegex = RegExp(r" featuring .+$");
+    artist = artist.replaceFirst(featuredArtistRegex, "");
+    guess = guess.replaceFirst(featuredArtistRegex, "");
+
+    // isolate artist from guess
+    RegExp artistRegex = RegExp(r".+ - ");
+    guess = guess.replaceFirst(artistRegex, "");
+    return guess == artist;
   }
 
   /// loads guesses from local storage
@@ -114,14 +119,15 @@ class GameController {
       if (guess == answer) {
         _guesses[numGuesses()].complete(Guess(guess, GuessResult.correct));
         _result.complete(Result.win);
-      } else
-      // partial
-      if (await _artistMatch(guess)) {
-        _guesses[numGuesses()].complete(Guess(guess, GuessResult.partial));
-      }
-      // incorrect
-      else {
-        _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
+      } else {
+        // partial
+        if (await _artistMatch(guess)) {
+          _guesses[numGuesses()].complete(Guess(guess, GuessResult.partial));
+        }
+        // incorrect
+        else {
+          _guesses[numGuesses()].complete(Guess(guess, GuessResult.incorrect));
+        }
         if (numGuesses() >= maxGuesses) {
           _result.complete(Result.lose);
         }
@@ -137,14 +143,13 @@ class GameController {
       if (numGuesses() >= maxGuesses) {
         _result.complete(Result.lose);
       }
-
       guessMade.trigger();
     }
   }
 
   /// Retrieves a string for result sharing
   Future<String> getSharingString() async {
-    String result = "";
+    String result = (await this.result) == Result.win ? "✔️" : "❌";
     for (int i = 0; i < maxGuesses; i++) {
       if (_guesses[i].isCompleted) {
         result += switch ((await _guesses[i].future).result) {
@@ -235,12 +240,30 @@ enum Result { win, lose }
 
 /// Represents guess results
 enum GuessResult {
-  correct(icon: GuessResultIcon(Icons.check, Colors.green)),
-  pass(icon: GuessResultIcon(Icons.check_box_outline_blank, Colors.grey)),
-  incorrect(icon: GuessResultIcon(Icons.close, Colors.red)),
+  correct(
+    icon: GuessResultIcon(
+      Icons.check,
+      Colors.green,
+    ),
+  ),
+  pass(
+    icon: GuessResultIcon(
+      Icons.check_box_outline_blank,
+      Colors.grey,
+    ),
+  ),
+  incorrect(
+    icon: GuessResultIcon(
+      Icons.close,
+      Colors.red,
+    ),
+  ),
   partial(
-      icon: GuessResultIcon(
-          Icons.indeterminate_check_box_outlined, Colors.yellow));
+    icon: GuessResultIcon(
+      Icons.indeterminate_check_box_outlined,
+      Colors.yellow,
+    ),
+  );
 
   const GuessResult({required this.icon});
 

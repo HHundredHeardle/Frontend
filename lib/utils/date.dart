@@ -6,11 +6,24 @@
 /// Authors: Joshua Linehan
 library;
 
-import 'package:instant/instant.dart';
+import 'package:timezone/data/latest_10y.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 /// Singleton access to uniform date
 class HHDate {
-  final DateTime date = dateTimeToZone(zone: "AEST", datetime: DateTime.now());
+  bool tzInitialized = false;
+
+  DateTime get date {
+    try {
+      if (!tzInitialized) {
+        tz.initializeTimeZones();
+        tzInitialized = true;
+      }
+      return tz.TZDateTime.now(tz.getLocation("Australia/Melbourne"));
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
 
   static final _instance = HHDate._internal();
 
