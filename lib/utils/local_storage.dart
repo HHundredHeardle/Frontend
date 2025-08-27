@@ -35,13 +35,13 @@ class LocalStorage {
 
   LocalStorage._internal() {
     // load guesses
-    Future.wait([_getGuesses(), HHDate().date]).then((value) {
+    _getGuesses().then((value) {
       List<Guess> guesses = [];
-      if (value[0] == null) {
+      if (value == null) {
         return guesses;
       }
-      dynamic guessJson = jsonDecode(value[0].toString());
-      for (String guessString in guessJson[value[1]]) {
+      dynamic guessJson = jsonDecode(value.toString());
+      for (String guessString in guessJson[HHDate().date]) {
         guesses.add(Guess.fromString(guessString));
       }
       return guesses;
@@ -65,7 +65,7 @@ class LocalStorage {
 
       // save json of guesses
       Map<String, List<String>> guessMap = {};
-      guessMap[HHDate.formatted(await HHDate().date)] = guessStrings;
+      guessMap[HHDate.formatted(HHDate().date)] = guessStrings;
       _setGuesses(jsonEncode(guessMap));
     });
 
@@ -76,7 +76,7 @@ class LocalStorage {
   factory LocalStorage() => _instance;
 
   /// gets stored streak
-  Future<List<String>?> _getStreak() async {
+  Future<List<String>?> _getStreak() {
     return _preferences.getStringList(_streakKey);
   }
 
@@ -86,7 +86,7 @@ class LocalStorage {
   }
 
   /// gets stored longest streak
-  Future<int?> _getLongestStreak() async {
+  Future<int?> _getLongestStreak() {
     return _preferences.getInt(_longestStreakKey);
   }
 
@@ -96,7 +96,7 @@ class LocalStorage {
   }
 
   /// gets stored guesses
-  Future<String?> _getGuesses() async {
+  Future<String?> _getGuesses() {
     return _preferences.getString(_guessesKey);
   }
 
@@ -117,11 +117,11 @@ class LocalStorage {
         break;
       case Result.win:
         List<String> streakList = (await _getStreak()) ?? [];
-        String today = HHDate.formatted(await HHDate().date);
+        String today = HHDate.formatted(HHDate().date);
         if (!streakList.contains(today)) {
-          streakList.add(HHDate.formatted(await HHDate().date));
+          streakList.add(HHDate.formatted(HHDate().date));
         }
-        streak = await _countStreak(streakList);
+        streak = _countStreak(streakList);
         streakList = streakList.sublist(streakList.length - streak);
         _setStreak(streakList);
         break;
@@ -135,8 +135,8 @@ class LocalStorage {
   }
 
   /// counts a streak from a list of date string
-  Future<int> _countStreak(List<String> streak) async {
-    DateTime date = await HHDate().date;
+  int _countStreak(List<String> streak) {
+    DateTime date = HHDate().date;
     int count = 0;
     int i = streak.length - 1;
     while (i >= 0) {

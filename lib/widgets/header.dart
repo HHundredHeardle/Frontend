@@ -145,8 +145,8 @@ class _HHCountdownText extends StatefulWidget {
 class _HHCountdownTextState extends State<_HHCountdownText> {
   static const Duration _oneSecond = Duration(seconds: 1);
 
-  final Future<Duration> _timeToNext = (() async {
-    DateTime now = await HHDate().date;
+  final Duration _timeToNext = (() {
+    DateTime now = HHDate().date;
     DateTime next = now.add(Duration(days: 1)).copyWith(
           hour: 0,
           minute: 0,
@@ -163,7 +163,7 @@ class _HHCountdownTextState extends State<_HHCountdownText> {
   /// starts a timer for the remaining time to next heardle, updates every
   /// second
   void _startTimer() {
-    _timeToNext.then((value) => setState(() => _countdownTime = value));
+    setState(() => _countdownTime = _timeToNext);
     Timer.periodic(_oneSecond, (Timer timer) {
       if (_countdownTime! == Duration.zero) {
         timer.cancel();
@@ -181,33 +181,21 @@ class _HHCountdownTextState extends State<_HHCountdownText> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _timeToNext,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            if (!snapshot.hasError) {
-              // start timer
-              if (!_timerStarted) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _startTimer();
-                  setState(() => _timerStarted = true);
-                });
-              }
-              // return text
-              return AutoSizeText(
-                _countdownTime
-                    .toString()
-                    // trim milliseconds off time string
-                    .replaceFirst(RegExp(r"\.\d{6}$"), ""),
-                style: widget.style,
-                maxLines: 1,
-              );
-            }
-          }
-        }
-        return Container();
-      },
+    // start timer
+    if (!_timerStarted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startTimer();
+        setState(() => _timerStarted = true);
+      });
+    }
+    // return text
+    return AutoSizeText(
+      _countdownTime
+          .toString()
+          // trim milliseconds off time string
+          .replaceFirst(RegExp(r"\.\d{6}$"), ""),
+      style: widget.style,
+      maxLines: 1,
     );
   }
 }

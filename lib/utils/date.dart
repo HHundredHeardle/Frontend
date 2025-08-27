@@ -6,14 +6,24 @@
 /// Authors: Joshua Linehan
 library;
 
-import 'package:timezone/browser.dart' as tz;
+import 'package:timezone/data/latest_10y.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 /// Singleton access to uniform date
 class HHDate {
-  final Future<DateTime> date = (() async {
-    await tz.initializeTimeZone('packages/timezone/data/latest_10y.tzf');
-    return tz.TZDateTime.now(tz.getLocation("Australia/Melbourne"));
-  })();
+  bool tzInitialized = false;
+
+  DateTime get date {
+    try {
+      if (!tzInitialized) {
+        tz.initializeTimeZones();
+        tzInitialized = true;
+      }
+      return tz.TZDateTime.now(tz.getLocation("Australia/Melbourne"));
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
 
   static final _instance = HHDate._internal();
 
@@ -27,7 +37,7 @@ class HHDate {
   }
 
   /// gets the date as a string in the form DD/MM/YYYY for result sharing
-  Future<String> resultString() async {
-    return formatted(await date);
+  String resultString() {
+    return formatted(date);
   }
 }

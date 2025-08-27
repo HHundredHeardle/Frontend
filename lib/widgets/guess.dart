@@ -108,7 +108,7 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   }
 
   /// Handles text field logic for passing
-  void _pass() async {
+  void _pass() {
     GameController().userHasInteracted = true;
     if (!GameController().isComplete()) {
       GameController().pass();
