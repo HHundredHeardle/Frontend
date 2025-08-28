@@ -123,7 +123,9 @@ class _HHAnswerEntryState extends State<HHAnswerEntry> {
   /// Enables text field when guesses load
   void _awaitGuesses() async {
     await GameController().guessesLoaded;
-    setState(() => _textFieldEnabled = true);
+    if (!GameController().isComplete()) {
+      setState(() => _textFieldEnabled = true);
+    }
   }
 
   /// Disables text field while answers are loading
