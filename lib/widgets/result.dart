@@ -70,7 +70,7 @@ class _HHResult extends StatelessWidget {
                         await Clipboard.setData(
                           ClipboardData(
                             text:
-                                "Hottest Hundred Heardle ${HHDate().resultString()}:\n${await GameController().getSharingString()}\nhttps://hhundredheardle.free.nf/",
+                                "Hottest Hundred Heardle ${HHDate().resultString()}:\n${await GameController().getSharingString()}\nhttps://hhundredheardle.github.io/Frontend/",
                           ),
                         ).whenComplete(() {
                           if (context.mounted) {
