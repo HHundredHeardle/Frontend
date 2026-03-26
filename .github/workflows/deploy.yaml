@@ -10,19 +10,23 @@ permissions:
     contents: read
     pages: write
     id-token: write
-    actions: read
 
 jobs:
     deploy:
         if: github.event.workflow_run.conclusion == 'success'
         runs-on: ubuntu-latest
         steps:
-            - name: Download build artifact
-              uses: actions/download-artifact@v4
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Flutter
+              uses: subosito/flutter-action@v2
               with:
-                  name: flutter-web-build
-                  path: build/web
-                  run-id: ${{ github.event.workflow_run.id }}
+                  channel: stable
+                  cache: true
+
+            - run: flutter pub get
+            - run: flutter build web --dart-define=COMMIT_HASH=${{ github.sha }} --dart-define=BACKEND_URL=${{ secrets.BACKEND_URL }}
 
             - name: Setup Pages
               uses: actions/configure-pages@v4
