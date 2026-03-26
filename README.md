@@ -16,7 +16,7 @@ This is the frontend for Hottest Hundred Heardle, a web app inspired by the now-
     - [1.2 - Project Management](#12---project-management)
   - [2 - Architecture](#2---architecture)
     - [2.1 - Flutter](#21---flutter)
-    - [2.2 - InfinityFree](#22---infinityfree)
+    - [2.2 - GitHub Pages](#22---github-pages)
   - [3 - CI/CD](#3---cicd)
     - [3.1 - Testing](#31---testing)
     - [3.2 - Deployment](#32---deployment)
@@ -47,9 +47,9 @@ Project tasks will be managed using [the HHundredHeardle GitHub Projects Board](
 
 Flutter will be used to create the frontend application. This allows access to the benefits of using dart, including type safety and aspects of functional programming. Flutter also allows for the potential of creating mobile and desktop applications in the future.
 
-### 2.2 - InfinityFree
+### 2.2 - GitHub Pages
 
-The project is hosted by InfinityFree. InfinityFree provides the domain and SSL certificate. The project is deployed to InfinityFree using FTP.
+The project is hosted by GitHubPages. The project is deployed to GitHub Pages using GitHub Actions.
 
 ## 3 - CI/CD
 
@@ -61,4 +61,4 @@ CI/CD is set up to run flutter tests. This is enabled for pull requests and push
 
 ### 3.2 - Deployment
 
-CI/CD is set up to automatically deploy to InfinityFree using FTP. This only occurs if tests pass. This is enabled for pushes to main only.
+CI/CD is set up to automatically deploy to GitHub Pages. This only occurs if tests pass. This is enabled for pushes to main only.
