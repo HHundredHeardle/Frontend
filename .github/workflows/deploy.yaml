@@ -1,41 +1,41 @@
 name: Deploy to GitHub Pages
 
 on:
-    workflow_run:
-        workflows: ["Flutter Tests"]
-        types: [completed]
-        branches: [main]
+  workflow_run:
+    workflows: ["Flutter Tests"]
+    types: [completed]
+    branches: [main]
 
 permissions:
-    contents: read
-    pages: write
-    id-token: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-    deploy:
-        if: github.event.workflow_run.conclusion == 'success'
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Set up Flutter
-              uses: subosito/flutter-action@v2
-              with:
-                  channel: stable
-                  cache: true
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
 
-            - run: flutter pub get
-            - run: flutter build web --dart-define=COMMIT_HASH=${{ github.sha }} --dart-define=BACKEND_URL=${{ secrets.BACKEND_URL }}
+      - run: flutter pub get
+      - run: flutter build web --base-href /Frontend/ --dart-define=COMMIT_HASH=${{ github.sha }} --dart-define=BACKEND_URL=${{ secrets.BACKEND_URL }}
 
-            - name: Setup Pages
-              uses: actions/configure-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-            - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                  path: "./build/web"
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./build/web"
 
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
